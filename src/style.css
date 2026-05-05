@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-primary: #f7931e;
+    --color-secondary: #002940;
+    --color-surface: #ffffff;
+    --color-text: #1f2937;
+}
+
+/* Dark mode */
+.dark {
+    --color-primary: #f7931e;
+    --color-secondary: #001a2a;
+    --color-surface: #0f172a;
+    --color-text: #e5e7eb;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    scroll-margin-top: 80px;
+}
