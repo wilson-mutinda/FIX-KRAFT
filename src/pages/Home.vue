@@ -188,7 +188,7 @@
         </h2>
 
         <p class="text-gray-300 mb-6">
-          Let’s turn your idea into a scalable digital product.
+          Let&apos;s turn your idea into a scalable digital product.
         </p>
 
         <button

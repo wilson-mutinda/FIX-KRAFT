@@ -10,11 +10,11 @@ const router = useRouter()
 
 // NAV LINKS CONFIG
 const links = [
-  { name: 'Home', path: '/' },
-  { name: 'Process', path: '/process' },
-  { name: 'Services', path: '/services' },
-  { name: 'Contact', path: '/contact' },
-  { name: 'Projects', path: '/projects' }
+  { name: 'Home', type: 'route', path: '/' },
+  { name: 'Process', type: 'scroll', id: 'process' },
+  { name: 'Services', type: 'route', path: '/services' },
+  { name: 'Projects', type: 'route', path: '/projects' },
+  { name: 'Contact', type: 'route', path: '/contact' }
 ]
 
 // TOGGLE MOBILE MENU
@@ -26,7 +26,9 @@ const toggleMenu = () => {
 const handleNav = async (link: any) => {
   mobileOpen.value = false
 
-  router.push(link.path)
+  if (route.path !== link.path) {
+    router.push(link.path)
+  }
 }
 
 // ACTIVE STATE
@@ -50,6 +52,11 @@ const setupObserver = () => {
   )
 
   sections.forEach((section) => observer.observe(section))
+}
+
+// open Contact page
+const openConactPage = () => {
+    router.push('/contact')
 }
 
 // INIT OBSERVER ON LOAD
@@ -118,7 +125,7 @@ watch(
 
       <!-- CTA -->
       <div class="hidden md:block">
-        <button class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:scale-105 transition">
+        <button @click="openConactPage" class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:scale-105 transition">
           Start Project
         </button>
       </div>
@@ -152,7 +159,7 @@ watch(
           {{ link.name }}
         </button>
 
-        <button class="bg-primary text-white px-4 py-2 rounded-lg mt-2">
+        <button @click="openConactPage" class="bg-primary text-white px-4 py-2 rounded-lg mt-2">
           Start Project
         </button>
 
