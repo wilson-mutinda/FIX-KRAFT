@@ -10,6 +10,7 @@ import 'aos/dist/aos.css'
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import { useThemeStore } from './stores/theme'
 
 const app = createApp(App)
 
@@ -34,5 +35,19 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
     NProgress.done()
 })
+
+const theme = useThemeStore()
+
+// Load saved theme
+const savedDark = localStorage.getItem('dark') === 'true'
+const savedPrimary = localStorage.getItem('primary')
+
+if (savedDark) {
+    theme.toggleDark()
+}
+
+if (savedPrimary) {
+    theme.setPrimary(savedPrimary)
+}
 
 app.mount('#app')

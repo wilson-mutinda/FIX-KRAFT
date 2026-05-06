@@ -5,16 +5,20 @@
 :root {
     --color-primary: #f7931e;
     --color-secondary: #002940;
+
     --color-surface: #ffffff;
     --color-text: #1f2937;
+    --color-border: #e5e7eb;
 }
 
 /* Dark mode */
 .dark {
     --color-primary: #f7931e;
     --color-secondary: #001a2a;
+
     --color-surface: #0f172a;
     --color-text: #e5e7eb;
+    --color-border: #1f2937;
 }
 
 html {

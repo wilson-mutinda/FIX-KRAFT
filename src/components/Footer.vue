@@ -10,7 +10,7 @@
                 <!-- LOGO CONTAINER -->
                 <div class="h-20 w-40 flex items-center justify-center overflow-hidden rounded-md">
                     <img 
-                    src="/fix-kraft-logo-blue-bg.svg" 
+                    :src="config.logo" 
                     alt="Logo"
                     class="h-full w-full object-contain"
                     />
@@ -30,10 +30,9 @@
             <div class="">
                 <h3 class="font-semibold mb-2">Links</h3>
                 <ul class=" space-y-2 text-sm text-gray-300">
-                    <li class="hover:text-white cursor-pointer">Home</li>
-                    <li class="hover:text-white cursor-pointer">Process</li>
-                    <li class="hover:text-white cursor-pointer">Services</li>
-                    <li class="hover:text-white cursor-pointer">Contact</li>
+                    <li v-for="link in config.navLinks" :key="link.name" class="hover:text-white cursor-pointer">
+                        {{ link.name }}
+                    </li>
                 </ul>
             </div>
 
@@ -47,7 +46,7 @@
                     <!-- <span></span> -->
                     <Mail class="w-4 h-4" />
                     <a href="mailto:info@fixkraftdigital.com">
-                        info@fixkraftdigital.com
+                        {{ config.email }}
                     </a>
                     </div>
 
@@ -55,14 +54,14 @@
                     <div class="flex items-center gap-2 hover:text-white transition">
                     <Phone class="w-4 h-4" />
                     <a href="tel:+254700000000">
-                        +254 700 000 000
+                        {{ config.phone }}
                     </a>
                     </div>
 
                     <!-- Location -->
                     <div class="flex items-center gap-2">
                     <MapPin class="w-4 h-4" />
-                    <span>Nairobi, Kenya</span>
+                    <span>{{ config.location }}</span>
                     </div>
 
                     <!-- Socials -->
@@ -91,7 +90,10 @@
 </template>
 
 <script setup lang="ts">
+import { useSiteConfig } from '@/stores/siteConfig';
 import { Briefcase, Globe, Mail, MapPin, Phone, Twitter } from 'lucide-vue-next';
 
 const currentYear = new Date().getFullYear()
+
+const config = useSiteConfig()
 </script>

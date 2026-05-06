@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSiteConfig } from '@/stores/siteConfig'
+import { useThemeStore } from '@/stores/theme'
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -8,35 +10,39 @@ const activeSection = ref('home')
 const route = useRoute()
 const router = useRouter()
 
-// NAV LINKS CONFIG
+// NAV LINKS
 const links = [
-  { name: 'Home', type: 'route', path: '/' },
-  { name: 'Process', type: 'scroll', id: 'process' },
-  { name: 'Services', type: 'route', path: '/services' },
-  { name: 'Projects', type: 'route', path: '/projects' },
-  { name: 'Contact', type: 'route', path: '/contact' }
+  { name: 'Home', path: '/' },
+  { name: 'Process', path: '/process' },
+  { name: 'Services', path: '/services' },
+  { name: 'Projects', path: '/projects' },
+  { name: 'Contact', path: '/contact' }
 ]
 
-// TOGGLE MOBILE MENU
+// TOGGLE MENU
 const toggleMenu = () => {
   mobileOpen.value = !mobileOpen.value
 }
 
-// SMART NAVIGATION
-const handleNav = async (link: any) => {
+// NAVIGATION
+const handleNav = (link: any) => {
   mobileOpen.value = false
-
   if (route.path !== link.path) {
     router.push(link.path)
   }
 }
 
-// ACTIVE STATE
+// ACTIVE LINK
 const isActive = (link: any) => {
-    return route.path === link.path
+  return route.path === link.path
 }
 
-// OBSERVER (TRACK SCROLL SECTIONS)
+// CONTACT CTA
+const openContactPage = () => {
+  router.push('/contact')
+}
+
+// SCROLL OBSERVER (optional)
 const setupObserver = () => {
   const sections = document.querySelectorAll('section')
 
@@ -54,19 +60,12 @@ const setupObserver = () => {
   sections.forEach((section) => observer.observe(section))
 }
 
-// open Contact page
-const openConactPage = () => {
-    router.push('/contact')
-}
-
-// INIT OBSERVER ON LOAD
 onMounted(() => {
   if (route.path === '/') {
     setupObserver()
   }
 })
 
-// RE-INIT OBSERVER WHEN ROUTE CHANGES
 watch(
   () => route.path,
   async (newPath) => {
@@ -76,6 +75,24 @@ watch(
     }
   }
 )
+
+// DYNAMIC LOGO
+const logo = ref('/fix-kraft-icon-no-bg.svg')
+
+onMounted(() => {
+  const saved = localStorage.getItem('logo')
+  if (saved) logo.value = saved
+})
+
+// THEME
+const theme = useThemeStore()
+
+const toggleDark = () => {
+  theme.toggleDark()
+}
+
+const config = useSiteConfig()
+
 </script>
 
 <template>
@@ -83,28 +100,26 @@ watch(
 
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
-      <!-- LOGO -->
+      <!-- LEFT: LOGO -->
       <div class="flex items-center gap-3">
-        <img src="/fix-kraft-icon-no-bg.svg" alt="logo" class="h-12 w-auto object-contain" />
+        <img :src="config.logo" alt="logo" class="h-12 w-auto object-contain" />
         <span class="text-xl font-bold text-primary hidden sm:block">
           FixKraft
         </span>
       </div>
 
-      <!-- DESKTOP NAV -->
+      <!-- CENTER: DESKTOP NAV -->
       <div class="hidden md:flex items-center gap-2">
-
         <button
-          v-for="link in links"
+          v-for="link in config.navLinks"
           :key="link.name"
           @click="handleNav(link)"
           class="relative px-4 py-2 text-sm rounded-lg transition-all duration-300"
         >
-
-          <!-- ACTIVE PILL -->
+          <!-- ACTIVE BACKGROUND -->
           <span
             v-if="isActive(link)"
-            class="absolute inset-0 bg-primary/10 rounded-lg transition-all duration-300"
+            class="absolute inset-0 bg-primary/10 rounded-lg"
           ></span>
 
           <!-- TEXT -->
@@ -118,53 +133,82 @@ watch(
           >
             {{ link.name }}
           </span>
-
-        </button>
-
-      </div>
-
-      <!-- CTA -->
-      <div class="hidden md:block">
-        <button @click="openConactPage" class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:scale-105 transition">
-          Start Project
         </button>
       </div>
 
-      <!-- MOBILE MENU BUTTON -->
-      <button
-        @click="toggleMenu"
-        class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
-      >
-        ☰
-      </button>
+      <!-- RIGHT: ACTIONS -->
+      <div class="flex items-center gap-2">
 
-    </div>
-
-    <!-- MOBILE MENU -->
-    <div
-      v-if="mobileOpen"
-      class="md:hidden px-6 pb-6 bg-white border-t border-gray-200"
-    >
-      <div class="flex flex-col gap-3 mt-4">
-
+        <!-- THEME BUTTON -->
         <button
-          v-for="link in links"
-          :key="link.name"
-          @click="handleNav(link)"
-          class="text-left px-4 py-2 rounded-lg transition"
-          :class="isActive(link)
-            ? 'bg-primary/10 text-primary font-semibold'
-            : 'text-gray-600 hover:bg-gray-100'"
+          @click="toggleDark"
+          class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-100 hover:shadow-md hover:scale-105 transition"
         >
-          {{ link.name }}
+          <span v-if="theme.dark">🌙</span>
+          <span v-else>☀️</span>
         </button>
 
-        <button @click="openConactPage" class="bg-primary text-white px-4 py-2 rounded-lg mt-2">
+        <!-- CTA (desktop only) -->
+        <button
+          @click="openContactPage"
+          class="hidden md:block bg-primary text-white px-4 py-2 rounded-lg shadow hover:scale-105 transition"
+        >
           Start Project
+        </button>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button
+          @click="toggleMenu"
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+        >
+          ☰
         </button>
 
       </div>
     </div>
+
+    <!-- MOBILE MENU WITH ANIMATION -->
+    <transition name="fade">
+      <div
+        v-if="mobileOpen"
+        class="md:hidden px-6 pb-6 bg-white border-t border-gray-200"
+      >
+        <div class="flex flex-col gap-3 mt-4">
+
+          <button
+            v-for="link in config.navLinks"
+            :key="link.name"
+            @click="handleNav(link)"
+            class="text-left px-4 py-2 rounded-lg transition"
+            :class="isActive(link)
+              ? 'bg-primary/10 text-primary font-semibold'
+              : 'text-gray-600 hover:bg-gray-100'"
+          >
+            {{ link.name }}
+          </button>
+
+          <button
+            @click="openContactPage"
+            class="bg-primary text-white px-4 py-2 rounded-lg mt-2"
+          >
+            Start Project
+          </button>
+
+        </div>
+      </div>
+    </transition>
 
   </nav>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>

@@ -5,7 +5,7 @@ import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
-  <div class="">
+  <div class="bg-surface text-text min-h-screen">
     <Navbar />
     <main>
       <router-view></router-view>

@@ -55,7 +55,7 @@
     </section>
 
     <!-- TRUST -->
-    <section class="py-16 bg-white text-center">
+    <section class="py-16 bg-surface text-center">
       <div class="max-w-5xl mx-auto px-6" data-aos="fade-up">
         <p class="text-gray-500 text-sm mb-6 uppercase tracking-wide">
           Trusted Tools & Technologies

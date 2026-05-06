@@ -50,11 +50,11 @@ const submitForm = async () => {
       <div class="max-w-3xl mx-auto px-6" data-aos="fade-up">
 
         <h1 class="text-4xl font-bold mb-4">
-          Let’s Build Something Powerful
+          Let&apos;s Build Something Powerful
         </h1>
 
         <p class="text-gray-300">
-          Tell us about your project and we’ll get back within 24 hours.
+          Tell us about your project and we&apos;ll get back within 24 hours.
         </p>
 
       </div>
