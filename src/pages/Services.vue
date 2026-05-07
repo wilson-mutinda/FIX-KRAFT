@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { useServicesStore } from '@/stores/services'
+import { onMounted } from 'vue'
+
+const store = useServicesStore()
+
+onMounted(() => {
+  store.load()
+})
 </script>
 
 <template>
@@ -14,7 +22,7 @@
         </h1>
 
         <p class="text-gray-300 text-lg mb-6">
-          We don’t just design — we engineer scalable digital systems for modern businesses.
+          We don&apos;t just design — we engineer scalable digital systems for modern businesses.
         </p>
 
         <button
@@ -35,72 +43,46 @@
           What We Offer
         </h2>
 
-        <div class="grid md:grid-cols-3 gap-8">
+        <!-- FADE TRANSITION WRAPPER -->
+        <transition-group
+          name="fade"
+          tag="div"
+          class="grid md:grid-cols-3 gap-8"
+        >
 
-          <!-- SERVICE 1 -->
-          <div data-aos="zoom-in"
-            class="p-6 bg-gray-50 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition">
+          <div
+            v-for="service in store.services"
+            :key="service.id"
+            data-aos="zoom-in"
+            class="p-6 bg-gray-50 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition"
+          >
 
-            <img src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
-                 class="rounded-lg mb-4 h-40 w-full object-cover"/>
+            <!-- IMAGE -->
+            <img
+              :src="service.image"
+              class="rounded-lg mb-4 h-40 w-full object-cover"
+            />
 
-            <h3 class="text-xl font-semibold mb-2">Web Development</h3>
+            <!-- TITLE -->
+            <h3 class="text-xl font-semibold mb-2">
+              {{ service.title }}
+            </h3>
 
+            <!-- DESCRIPTION -->
             <p class="text-gray-600 text-sm mb-4">
-              High-performance websites built for speed, SEO, and conversion.
+              {{ service.description }}
             </p>
 
+            <!-- FEATURES -->
             <ul class="text-sm text-gray-500 space-y-1">
-              <li>• Responsive design</li>
-              <li>• SEO optimization</li>
-              <li>• Fast loading speeds</li>
+              <li v-for="(f, i) in service.features" :key="i">
+                • {{ f }}
+              </li>
             </ul>
 
           </div>
 
-          <!-- SERVICE 2 -->
-          <div data-aos="zoom-in" data-aos-delay="100"
-            class="p-6 bg-gray-50 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition">
-
-            <img src="https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg"
-                 class="rounded-lg mb-4 h-40 w-full object-cover"/>
-
-            <h3 class="text-xl font-semibold mb-2">SaaS Systems</h3>
-
-            <p class="text-gray-600 text-sm mb-4">
-              Scalable dashboards and platforms tailored to your business logic.
-            </p>
-
-            <ul class="text-sm text-gray-500 space-y-1">
-              <li>• Admin dashboards</li>
-              <li>• Role-based systems</li>
-              <li>• Analytics integration</li>
-            </ul>
-
-          </div>
-
-          <!-- SERVICE 3 -->
-          <div data-aos="zoom-in" data-aos-delay="200"
-            class="p-6 bg-gray-50 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition">
-
-            <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
-                 class="rounded-lg mb-4 h-40 w-full object-cover"/>
-
-            <h3 class="text-xl font-semibold mb-2">Custom CMS</h3>
-
-            <p class="text-gray-600 text-sm mb-4">
-              Powerful content management systems built specifically for your workflow.
-            </p>
-
-            <ul class="text-sm text-gray-500 space-y-1">
-              <li>• Easy content control</li>
-              <li>• Custom dashboards</li>
-              <li>• Secure backend</li>
-            </ul>
-
-          </div>
-
-        </div>
+        </transition-group>
 
       </div>
     </section>
@@ -185,7 +167,7 @@
         </h2>
 
         <p class="text-gray-300 mb-6">
-          Let’s turn your idea into a working product.
+          Let&apos;s turn your idea into a working product.
         </p>
 
         <button
@@ -200,3 +182,17 @@
 
   </div>
 </template>
+
+<style>
+/* FADE ANIMATION */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>

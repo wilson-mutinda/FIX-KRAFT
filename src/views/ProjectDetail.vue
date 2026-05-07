@@ -1,43 +1,19 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useProjectsStore } from '@/stores/projects';
 
 const route = useRoute()
 
-const project = ref({
-  title: 'SaaS Dashboard System',
-  category: 'Web Application',
-  heroImage: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg',
+const store = useProjectsStore()
 
-  overview:
-    'A full-featured SaaS dashboard designed for managing users, analytics, and business operations.',
+const project = ref<any>(null)
 
-  problem:
-    'The client lacked a centralized system to manage users and track performance metrics efficiently.',
-
-  solution:
-    'We built a scalable dashboard with real-time analytics, role-based access, and modern UI.',
-
-  results: [
-    '⚡ 60% faster data access',
-    '📈 Improved decision making',
-    '🔐 Secure role-based system'
-  ],
-
-  features: [
-    'User management system',
-    'Analytics dashboard',
-    'Authentication & roles',
-    'Responsive UI'
-  ],
-
-  tech: ['Vue', 'Django', 'PostgreSQL', 'Tailwind'],
-
-  gallery: [
-    'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg',
-    'https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg'
-  ]
+onMounted(() => {
+  store.load()
+  project.value = store.getById(Number(route.params.id))
 })
+
 </script>
 
 <template>

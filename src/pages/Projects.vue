@@ -1,35 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useProjectsStore } from '@/stores/projects'
+import { onMounted, ref } from 'vue'
 
 // FILTER STATE
 const activeFilter = ref('All')
 
 // MOCK DATA (Replace with API later)
-const projects = ref([
-  {
-    id: 1,
-    title: 'SaaS Dashboard',
-    category: 'Web',
-    image: 'https://via.placeholder.com/600x400'
-  },
-  {
-    id: 2,
-    title: 'School CMS',
-    category: 'CMS',
-    image: 'https://via.placeholder.com/600x400'
-  },
-  {
-    id: 3,
-    title: 'Portfolio Website',
-    category: 'Web',
-    image: 'https://via.placeholder.com/600x400'
-  }
-])
+const store = useProjectsStore()
+
+onMounted(() => {
+  store.load()
+})
 
 // FILTER LOGIC
 const filteredProjects = () => {
-  if (activeFilter.value === 'All') return projects.value
-  return projects.value.filter(p => p.category === activeFilter.value)
+  if (activeFilter.value === 'All') return store.projects
+  return store.projects.filter(p => p.category === activeFilter.value)
 }
 </script>
 
