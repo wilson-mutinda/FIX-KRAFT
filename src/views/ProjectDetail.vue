@@ -158,7 +158,7 @@ onMounted(() => {
         </h2>
 
         <p class="text-gray-300 mb-6">
-          Let’s build your system next.
+          Let&apos;s build your system next.
         </p>
 
         <button
