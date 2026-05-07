@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue';
+
 </script>
 
 <template>
@@ -22,13 +24,17 @@
           </p>
 
           <div class="flex gap-4">
-            <button
+            <!-- <button
               @click="$router.push('/contact')"
               class="bg-primary px-6 py-3 rounded-xl shadow-lg 
               hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-300"
             >
               Start Project
-            </button>
+            </button> -->
+
+            <BaseButton @click="$router.push('/contact')">
+              Start Project
+            </BaseButton>
 
             <button
               @click="$router.push('/projects')"
@@ -113,14 +119,18 @@
 
       </div>
 
-      <button
+      <!-- <button
         data-aos="fade-up"
         @click="$router.push('/services')"
         class="mt-10 bg-primary text-white px-6 py-3 rounded-lg 
         hover:scale-105 transition"
       >
         View All Services
-      </button>
+      </button> -->
+
+      <BaseButton @click="$router.push('/services')" data-aos="fade-up" class="mt-10">
+        View All Services
+      </BaseButton>
     </section>
 
     <!-- PROJECTS -->
@@ -169,14 +179,18 @@
 
       </div>
 
-      <button
+      <!-- <button
         data-aos="fade-up"
         @click="$router.push('/projects')"
         class="mt-10 bg-primary text-white px-6 py-3 rounded-lg 
         hover:scale-105 transition"
       >
         View All Projects
-      </button>
+      </button> -->
+
+      <BaseButton data-aos="fade-up" @click="$router.push('/projects')" class="mt-10">
+        View All Projects
+      </BaseButton>
     </section>
 
     <!-- CTA -->
@@ -191,13 +205,17 @@
           Let&apos;s turn your idea into a scalable digital product.
         </p>
 
-        <button
+        <!-- <button
           @click="$router.push('/contact')"
           class="bg-primary px-6 py-3 rounded-xl shadow-lg 
           hover:scale-105 transition"
         >
           Start a Project
-        </button>
+        </button> -->
+
+        <BaseButton @click="$router.push('/contact')" class="">
+          start a Project
+        </BaseButton>
 
       </div>
     </section>

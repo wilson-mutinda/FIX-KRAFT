@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useServicesStore } from '@/stores/services'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const store = useServicesStore()
 
@@ -77,7 +79,8 @@ const uploadImage = (e: Event) => {
 
       <h2 class="text-xl font-bold mb-4">Edit Service</h2>
 
-      <input v-model="selected.title" class="input mb-3" placeholder="Title" />
+      <!-- <input v-model="selected.title" class="input mb-3" placeholder="Title" /> -->
+      <BaseInput v-model="selected.title" placeholder="Title"/>
 
       <textarea
         v-model="selected.description"
@@ -87,6 +90,7 @@ const uploadImage = (e: Event) => {
 
       <!-- IMAGE UPLOAD -->
       <input type="file" @change="(e) => uploadImage(e)" />
+      <!-- <BaseInput type="file" @change="(e) => uploadImage(e)" /> -->
 
       <img v-if="selected.image" :src="selected.image" class="h-32 mt-2" />
 
@@ -102,14 +106,21 @@ const uploadImage = (e: Event) => {
         <button @click="selected.features.push('')" class="text-primary text-sm">
           + Add Feature
         </button>
+        <!-- <BaseButton @click="selected.features.push('')" >
+          + Add Feature
+        </BaseButton> -->
       </div>
 
-      <button
+      <!-- <button
         @click="save"
         class="mt-6 bg-primary text-white px-5 py-2 rounded"
       >
         Save Service
-      </button>
+      </button> -->
+
+      <BaseButton @click="save">
+        Save Service
+      </BaseButton>
 
     </div>
 

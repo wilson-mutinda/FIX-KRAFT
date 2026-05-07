@@ -3,6 +3,7 @@ import { useSiteConfig } from '@/stores/siteConfig'
 import { useThemeStore } from '@/stores/theme'
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import BaseButton from './ui/BaseButton.vue'
 
 const mobileOpen = ref(false)
 const activeSection = ref('home')
@@ -149,12 +150,16 @@ const config = useSiteConfig()
         </button>
 
         <!-- CTA (desktop only) -->
-        <button
+        <!-- <button
           @click="openContactPage"
           class="hidden md:block bg-primary text-white px-4 py-2 rounded-lg shadow hover:scale-105 transition"
         >
           Start Project
-        </button>
+        </button> -->
+
+        <base-button @click="openContactPage" class="hidden md:block">
+        Start Project
+      </base-button>
 
         <!-- MOBILE MENU BUTTON -->
         <button
@@ -187,12 +192,14 @@ const config = useSiteConfig()
             {{ link.name }}
           </button>
 
-          <button
+          <!-- <button
             @click="openContactPage"
             class="bg-primary text-white px-4 py-2 rounded-lg mt-2"
           >
             Start Project
-          </button>
+          </button> -->
+
+          <base-button @click="openContactPage">Start Project</base-button>
 
         </div>
       </div>

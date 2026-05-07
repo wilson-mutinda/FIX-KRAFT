@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseInput from '@/components/ui/BaseInput.vue'
 import { ref } from 'vue'
 
 // FORM STATE
@@ -105,22 +106,26 @@ const submitForm = async () => {
             </h2>
 
             <!-- NAME -->
-            <input
+            <!-- <input
               v-model="form.name"
               type="text"
               placeholder="Your Name"
               required
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
-            />
+            /> -->
+
+            <BaseInput v-model="form.name" placeholder="Your Name" required type="text" />
 
             <!-- EMAIL -->
-            <input
+            <!-- <input
               v-model="form.email"
               type="email"
               placeholder="Your Email"
               required
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
-            />
+            /> -->
+
+            <BaseInput v-model="form.email" type="email" placeholder="Your Email" required />
 
             <!-- SERVICE -->
             <select

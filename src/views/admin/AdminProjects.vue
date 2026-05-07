@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useProjectsStore } from '@/stores/projects'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
 
 const store = useProjectsStore()
 
@@ -52,9 +54,11 @@ const add = () => {
     <!-- ADD FORM -->
     <div class="bg-white p-6 rounded-xl shadow mb-6 space-y-3">
 
-        <input v-model="newProject.title" placeholder="Title" class="input" />
+        <!-- <input v-model="newProject.title" placeholder="Title" class="input" /> -->
+        <BaseInput v-model="newProject.title" placeholder="Title" />
 
-        <input v-model="newProject.category" placeholder="Category" class="input" />
+        <!-- <input v-model="newProject.category" placeholder="Category" class="input" /> -->
+         <BaseInput v-model="newProject.category" placeholder="Category" />
 
         <input type="file" accept="image/*" @change="uploadImage" />
 
@@ -63,9 +67,9 @@ const add = () => {
             <img :src="newProject.image" class="h-40 w-full object-cover rounded" />
         </div>
 
-        <button @click="add" class="bg-primary text-white px-4 py-2 rounded">
-            Add Project
-        </button>
+        <BaseButton @click="add">
+          Add Project
+        </BaseButton>
 
     </div>
 

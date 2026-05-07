@@ -18,10 +18,13 @@
   },
   "dependencies": {
     "aos": "^2.3.4",
+    "chart.js": "^4.5.1",
     "lucide-vue-next": "^1.0.0",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
+    "vue-chart.js": "^0.2.0",
+    "vue-chartjs": "^5.3.3",
     "vue-router": "^5.0.4"
   },
   "devDependencies": {

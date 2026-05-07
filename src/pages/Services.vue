@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { useServicesStore } from '@/stores/services'
 import { onMounted } from 'vue'
 
@@ -25,12 +26,16 @@ onMounted(() => {
           We don&apos;t just design — we engineer scalable digital systems for modern businesses.
         </p>
 
-        <button
+        <!-- <button
           @click="$router.push('/contact')"
           class="bg-primary px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition"
         >
           Start Your Project
-        </button>
+        </button> -->
+
+        <base-button @click="$router.push('/contact')">
+        Start Your Project
+      </base-button>
 
       </div>
     </section>
@@ -170,12 +175,16 @@ onMounted(() => {
           Let&apos;s turn your idea into a working product.
         </p>
 
-        <button
+        <!-- <button
           @click="$router.push('/contact')"
           class="bg-primary px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition"
         >
           Start a Project
-        </button>
+        </button> -->
+
+        <base-button @click="$router.push('/contact')">
+        Start a Project
+      </base-button>
 
       </div>
     </section>

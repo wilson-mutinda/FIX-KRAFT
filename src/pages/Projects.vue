@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { useProjectsStore } from '@/stores/projects'
 import { onMounted, ref } from 'vue'
 
