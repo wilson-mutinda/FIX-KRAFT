@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { useSiteConfig } from '@/stores/siteConfig'
+import BaseButton from '@/components/ui/BaseButton.vue'
+// import BaseButton from '@/components/ui/BaseButton.vue'
 
 const theme = useThemeStore()
 
@@ -158,9 +160,10 @@ const saveFooter = () => {
                 <img :src="logo" class="h-12 object-contain" />
             </div>
             <div class="px-6 py-4 flex justify-end">
-                <button @click="saveBranding" class="bg-primary text-white px-5 py-2 rounded-lg">
-                    Save Branding
-                </button>
+                
+                <BaseButton @click="saveBranding">
+                  Save Branding
+                </BaseButton>
             </div>
 
         </div>
@@ -204,12 +207,10 @@ const saveFooter = () => {
           </div>
 
           <div class="px-6 py-4 flex justify-end">
-            <button
-                @click="saveGeneral"
-                class="bg-primary text-white px-5 py-2 rounded-lg hover:opacity-90"
-            >
-                Save Changes
-            </button>
+      
+            <BaseButton @click="saveGeneral">
+              Save Changes
+            </BaseButton>
           </div>
 
         </div>
@@ -245,12 +246,10 @@ const saveFooter = () => {
     </div>
 
     <div class="flex justify-end">
-      <button
-        @click="saveFooter"
-        class="bg-primary text-white px-5 py-2 rounded-lg"
-      >
-        Save Footer
-      </button>
+
+      <BaseButton @click="saveFooter">
+        Save Footer 
+      </BaseButton>
     </div>
 
   </div>
@@ -300,12 +299,11 @@ const saveFooter = () => {
             </button>
 
             <div class="flex justify-end">
-            <button
-                @click="saveNav"
-                class="bg-primary text-white px-5 py-2 rounded-lg"
-            >
-                Save Navigation
-            </button>
+
+            <BaseButton @click="saveNav">
+              Save Navigation
+            </BaseButton>
+
             </div>
 
         </div>
