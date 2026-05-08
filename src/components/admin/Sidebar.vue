@@ -12,7 +12,8 @@ const links = [
   { name: 'Projects', path: '/admin/projects' },
   { name: 'Services', path: '/admin/services' },
   { name: 'Messages', path: '/admin/messages' },
-  { name: 'Settings', path: '/admin/settings' }
+  { name: 'Settings', path: '/admin/settings' },
+  { name: 'Media', path: '/admin/media' }
 ]
 </script>
 

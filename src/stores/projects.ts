@@ -25,6 +25,27 @@ export const useProjectsStore = defineStore('projects', () => {
         save()
     }
 
+    const updateProject = (
+        id: number,
+        updated: any
+        ) => {
+
+        const index =
+            projects.value.findIndex(
+            p => p.id === id
+            )
+
+        if (index !== -1) {
+
+            projects.value[index] = {
+            ...projects.value[index],
+            ...updated
+            }
+
+            save()
+        }
+    }
+
     const getById = (id: number) => {
         return projects.value.find(p => p.id === id)
     }
@@ -33,6 +54,7 @@ export const useProjectsStore = defineStore('projects', () => {
         projects,
         load,
         addProject,
+        updateProject,
         deleteProject,
         getById
     }

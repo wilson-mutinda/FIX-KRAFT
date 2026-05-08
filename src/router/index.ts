@@ -1,3 +1,4 @@
+import MediaManager from '@/components/media/MediaManager.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import Contact from '@/pages/Contact.vue'
 import Home from '@/pages/Home.vue'
@@ -26,7 +27,8 @@ const router = createRouter({
       { path: 'projects', component: AdminProjects },
       { path: 'services', component: AdminServices },
       { path: 'messages', component: Messages },
-      { path: 'settings', component: Settings }
+      { path: 'settings', component: Settings },
+      { path: 'media', component: MediaManager }
     ]}
 
   ],

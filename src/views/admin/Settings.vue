@@ -1,73 +1,119 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import { useThemeStore } from '@/stores/theme'
 import { useSiteConfig } from '@/stores/siteConfig'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
-// import BaseButton from '@/components/ui/BaseButton.vue'
 
 const theme = useThemeStore()
+const config = useSiteConfig()
 
 const activeTab = ref('appearance')
 
-// HANDLERS
-const toggleDark = () => theme.toggleDark()
+const loading = ref(false)
 
-const updatePrimary = (e: Event) => {
-  const color = (e.target as HTMLInputElement).value
+
+// THEME
+const toggleDark = () => {
+  theme.toggleDark()
+}
+
+const updatePrimary = (
+  e: Event
+) => {
+
+  const color =
+    (e.target as HTMLInputElement).value
+
   theme.setPrimary(color)
 }
 
-// site name save
-const siteName = ref('FixKraft Digital')
-const email = ref('info@foxkraftdigital.com')
 
-const saveGeneral = () => {
-    config.saveGeneral()
+// LOGO UPLOAD
+const uploadLogo = (
+  e: Event
+) => {
 
-    alert('General Settings saved!')
+  const target =
+    e.target as HTMLInputElement
+
+  if (!target.files || !target.files.length)
+    return
+
+  const file = target.files[0]
+
+  if (!file) return
+
+  const reader = new FileReader()
+
+  reader.onload = () => {
+
+    config.logo =
+      reader.result as string
+  }
+
+  reader.readAsDataURL(file)
 }
 
-const logo = ref<string | null>(localStorage.getItem('logo'))
 
-// appearance tab
-const config = useSiteConfig()
+// SAVE BRANDING
+const saveBranding = async () => {
 
-const uploadLogo = (e: Event) => {
-    const file = (e.target as HTMLInputElement).files?.[0]
+  loading.value = true
 
-    if (!file) return
+  setTimeout(() => {
 
-    const reader = new FileReader()
-    reader.onload = () => {
-        config.logo = reader.result as string
-    }
-    reader.readAsDataURL(file)
-}
-
-const saveBranding = () => {
     config.saveBranding()
+
+    loading.value = false
+
     alert('Branding Saved!')
+
+  }, 1200)
 }
 
+
+// GENERAL
+const saveGeneral = () => {
+
+  config.saveGeneral()
+
+  alert('General Settings saved!')
+}
+
+
+// NAVIGATION
 const addLink = () => {
-    config.navLinks.push({ name: '', path: '' })
+
+  config.navLinks.push({
+    name: '',
+    path: ''
+  })
 }
 
-const removeLink = (i: number) => {
-    config.navLinks.splice(i, 1)
+const removeLink = (
+  i: number
+) => {
+
+  config.navLinks.splice(i, 1)
 }
 
 const saveNav = () => {
-    config.saveNav()
-    alert('NAvifation saved!')
+
+  config.saveNav()
+
+  alert('Navigation saved!')
 }
 
-// Footer Tab
+
+// FOOTER
 const saveFooter = () => {
-    config.saveFooter()
-    alert('Footer saved!')
-}
 
+  config.saveFooter()
+
+  alert('Footer saved!')
+}
 </script>
 
 <template>
@@ -146,25 +192,64 @@ const saveFooter = () => {
           </div>
 
           <!-- LOGO UPLOAD -->
-            <div class="flex items-center justify-between px-6 py-4">
-                <div>
-                    <p class="text-sm font-medium text-text">Logo</p>
-                    <p class="text-xs text-text/60">Upload brand logo</p>
-                </div>
+          <div class="flex items-center justify-between px-6 py-4">
 
-                <input type="file" accept="image/*" @change="uploadLogo" />
-                </div>
+            <div>
+              <p class="text-sm font-medium text-text">
+                Logo
+              </p>
 
-                <!-- PREVIEW -->
-                <div v-if="logo" class="px-6 py-4">
-                <img :src="logo" class="h-12 object-contain" />
+              <p class="text-xs text-text/60">
+                Upload brand logo
+              </p>
             </div>
-            <div class="px-6 py-4 flex justify-end">
-                
-                <BaseButton @click="saveBranding">
-                  Save Branding
-                </BaseButton>
-            </div>
+
+            <input
+              type="file"
+              accept="image/*"
+              @change="uploadLogo"
+            />
+
+          </div>
+
+          <!-- PREVIEW -->
+          <div
+            v-if="config.logo"
+            class="px-6 py-4"
+          >
+
+            <img
+              :src="config.logo"
+              class="h-14 object-contain"
+            />
+
+          </div>
+
+          <!-- SAVE -->
+          <div class="px-6 py-4 flex justify-end">
+
+            <BaseButton
+              @click="saveBranding"
+              :disabled="loading"
+              class="flex items-center gap-2"
+            >
+
+              <span
+                v-if="loading"
+                class="w-4 h-4 border-2
+                      border-white border-t-transparent
+                      rounded-full animate-spin"
+              />
+
+              {{
+                loading
+                  ? 'Saving...'
+                  : 'Save Branding'
+              }}
+
+            </BaseButton>
+
+          </div>
 
         </div>
 
