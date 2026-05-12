@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router'
 
 defineProps<{
@@ -15,6 +16,15 @@ const links = [
   { name: 'Settings', path: '/admin/settings' },
   { name: 'Media', path: '/admin/media' }
 ]
+
+const auth = useAuthStore()
+
+const handleLogout = () => {
+
+  auth.logout()
+
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -48,6 +58,20 @@ const links = [
       </button>
 
     </nav>
+
+    <!-- USER/LOGOUT -->
+     <div class="p-4 border-t border-border">
+
+      <button @click="handleLogout" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-500 hover:bg-red-50 transition">
+
+        <span class="text-lg">⎋</span>
+
+        <span class="text-lg">
+          Logout
+        </span>
+
+      </button>
+     </div>
 
   </aside>
 </template>

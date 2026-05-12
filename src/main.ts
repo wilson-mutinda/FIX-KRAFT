@@ -11,6 +11,7 @@ import 'aos/dist/aos.css'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useThemeStore } from './stores/theme'
+import { useAuthStore } from './stores/auth'
 
 const app = createApp(App)
 
@@ -49,5 +50,11 @@ if (savedDark) {
 if (savedPrimary) {
     theme.setPrimary(savedPrimary)
 }
+
+// AUTH STORE
+const auth = useAuthStore()
+
+// HYDRATE USER SESSION
+auth.fetchCurrentUser()
 
 app.mount('#app')
