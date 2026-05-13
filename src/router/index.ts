@@ -44,31 +44,31 @@ const router = createRouter({
   }
 })
 
-// router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
 
-//   const auth = useAuthStore()
+  const auth = useAuthStore()
 
-//   // CHECK IF ROUTE NEEDS AUTH
-//   const requiresAuth = to.matched.some(
-//     record => record.meta.requiresAuth
-//   )
+  // CHECK IF ROUTE NEEDS AUTH
+  const requiresAuth = to.matched.some(
+    record => record.meta.requiresAuth
+  )
 
-//   // IF NOT LOGGED IN
-//   if (requiresAuth && !auth.isAuthenticated) {
-//     next('/login')
+  // IF NOT LOGGED IN
+  if (requiresAuth && !auth.isAuthenticated) {
+    next('/login')
 
-//   }
+  }
 
-//   // IF ALREADY LOGGED IN
-//   else if (
-//     (to.path === '/login' || to.path === '/register') && auth.isAuthenticated
-//   ) {
-//     next('/admin')
+  // IF ALREADY LOGGED IN
+  else if (
+    (to.path === '/login' || to.path === '/register') && auth.isAuthenticated
+  ) {
+    next('/admin')
 
-//   }
-//   else {
-//     next()
-//   }
-// })
+  }
+  else {
+    next()
+  }
+})
 
 export default router

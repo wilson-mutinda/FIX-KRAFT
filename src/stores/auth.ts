@@ -17,11 +17,11 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = computed(() => !!accessToken.value)
 
     // LOGIN
-    const login = async (email: string, password: string) => {
+    const login = async (username: string, password: string) => {
         try {
             
             const response = await axios.post(`${API_URL}/token/`, {
-                email,
+                username,
                 password
             })
 

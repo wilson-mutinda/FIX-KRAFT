@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import {
+  ref,
+  onMounted
+} from 'vue'
 
-import { useProjectsStore } from '@/stores/projects'
-import { useToastStore } from '@/stores/toast'
+import {
+  useProjectsStore
+} from '@/stores/projects'
+
+import {
+  useToastStore
+} from '@/stores/toast'
 
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
@@ -11,27 +19,24 @@ import BaseModal from '@/components/ui/BaseModal.vue'
 const store = useProjectsStore()
 const toast = useToastStore()
 
-// LOAD PROJECTS
-onMounted(() => {
-  store.load()
+onMounted(async () => {
+  await store.load()
 })
 
-// FORM
-const newProject = ref({
+const newProject = ref<any>({
   title: '',
-  category: '',
-  image: '' as string | null
+  technologies: '',
+  image: null
 })
 
-// LOADING
 const loading = ref(false)
 
-// EDIT MODE
 const editingId = ref<number | null>(null)
 
-// DELETE MODAL
 const showDelete = ref(false)
-const selectedDeleteId = ref<number | null>(null)
+
+const selectedDeleteId =
+  ref<number | null>(null)
 
 // IMAGE UPLOAD
 const uploadImage = (
@@ -46,29 +51,45 @@ const uploadImage = (
 
   const file = target.files[0]
 
-  if (!file) return
-
-  const reader = new FileReader()
-
-  reader.onload = () => {
-
-    newProject.value.image =
-      reader.result as string
-  }
-
-  reader.readAsDataURL(file)
+  newProject.value.image = file
 }
 
-// ADD / UPDATE
+const previewImage = (image: any) => {
+
+  if (!image) return ''
+
+  // EXISTING URL FROM BACKEND
+  if (typeof image === 'string') {
+    return image
+  }
+
+  // NEW FILE OBJECT
+  return window.URL.createObjectURL(image)
+}
+
+// SAVE PROJECT
 const saveProject = async () => {
 
   if (
-    !newProject.value.title ||
+    !newProject.value.title
+  ) {
+
+    toast.trigger(
+      'Title required',
+      'error'
+    )
+
+    return
+  }
+
+  // IMAGE REQUIRED ONLY ON CREATE
+  if (
+    !editingId.value &&
     !newProject.value.image
   ) {
 
     toast.trigger(
-      'Title and image are required',
+      'Image required',
       'error'
     )
 
@@ -77,15 +98,13 @@ const saveProject = async () => {
 
   loading.value = true
 
-  setTimeout(() => {
+  try {
 
     if (editingId.value) {
 
-      store.updateProject(
+      await store.updateProject(
         editingId.value,
-        {
-          ...newProject.value
-        }
+        newProject.value
       )
 
       toast.trigger(
@@ -94,9 +113,9 @@ const saveProject = async () => {
 
     } else {
 
-      store.addProject({
-        ...newProject.value
-      })
+      await store.addProject(
+        newProject.value
+      )
 
       toast.trigger(
         'Project added successfully'
@@ -105,9 +124,19 @@ const saveProject = async () => {
 
     resetForm()
 
-    loading.value = false
+  } catch (err) {
 
-  }, 1200)
+    console.error(err)
+
+    toast.trigger(
+      'Operation failed',
+      'error'
+    )
+
+  } finally {
+
+    loading.value = false
+  }
 }
 
 // RESET
@@ -115,8 +144,8 @@ const resetForm = () => {
 
   newProject.value = {
     title: '',
-    category: '',
-    image: ''
+    technologies: '',
+    image: null
   }
 
   editingId.value = null
@@ -129,7 +158,8 @@ const editProject = (
 
   newProject.value = {
     title: project.title,
-    category: project.category,
+    technologies:
+      project.technologies,
     image: project.image
   }
 
@@ -138,6 +168,11 @@ const editProject = (
   toast.trigger(
     'Editing project'
   )
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
 }
 
 // OPEN DELETE
@@ -151,21 +186,32 @@ const openDelete = (
 }
 
 // CONFIRM DELETE
-const confirmDelete = () => {
+const confirmDelete = async () => {
 
   if (!selectedDeleteId.value)
     return
 
-  store.deleteProject(
-    selectedDeleteId.value
-  )
+  try {
 
-  toast.trigger(
-    'Project deleted',
-    'error'
-  )
+    await store.deleteProject(
+      selectedDeleteId.value
+    )
 
-  showDelete.value = false
+    toast.trigger(
+      'Project deleted'
+    )
+
+  } catch (err) {
+
+    toast.trigger(
+      'Delete failed',
+      'error'
+    )
+
+  } finally {
+
+    showDelete.value = false
+  }
 }
 </script>
 
@@ -206,8 +252,8 @@ const confirmDelete = () => {
         />
 
         <BaseInput
-          v-model="newProject.category"
-          placeholder="Project category"
+          v-model="newProject.technologies"
+          placeholder="Project technologies"
         />
 
       </div>
@@ -251,7 +297,7 @@ const confirmDelete = () => {
         >
 
           <img
-            :src="newProject.image"
+            :src="previewImage(newProject.image)"
             class="h-64 w-full object-cover"
           />
 
@@ -360,7 +406,7 @@ const confirmDelete = () => {
               </h3>
 
               <p class="text-sm text-gray-500 mt-1">
-                {{ p.category }}
+                {{ p.technologies }}
               </p>
             </div>
 

@@ -10,7 +10,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 const auth = useAuthStore()
 const router = useRouter()
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 
 const loading = ref(false)
@@ -22,7 +22,7 @@ const handleLogin = async () => {
   errorMessage.value = ''
 
   const response = await auth.login(
-    email.value,
+    username.value,
     password.value
   )
 
@@ -154,17 +154,17 @@ const handleLogin = async () => {
             class="mt-10 space-y-6"
           >
 
-            <!-- EMAIL -->
+            <!-- USERNAME -->
             <div>
 
               <label class="block mb-2 text-sm font-medium text-text">
-                Email Address
+                Username
               </label>
 
               <BaseInput
-                v-model="email"
-                type="email"
-                placeholder="Enter your email"
+                v-model="username"
+                type="username"
+                placeholder="Enter your username"
               />
 
             </div>

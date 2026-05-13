@@ -1,61 +1,188 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import axios from 'axios'
+
+import { useAuthStore } from './auth'
+
+const API_URL = 'http://127.0.0.1:8000/api'
 
 export const useProjectsStore = defineStore('projects', () => {
 
     const projects = ref<any[]>([])
 
-    const load = () => {
-        const saved = localStorage.getItem('projects')
-        if (saved) projects.value = JSON.parse(saved)
+    const loading = ref(false)
+
+    const auth = useAuthStore()
+
+    // AXIOS INSTANCE
+    const api = axios.create({
+        baseURL: API_URL
+    })
+
+    // TOKEN INTERCEPTOR
+    api.interceptors.request.use((config) => {
+
+        if (auth.accessToken) {
+
+            config.headers.Authorization =
+                `Bearer ${auth.accessToken}`
+        }
+
+        return config
+    })
+
+    // LOAD PROJECTS
+    const load = async () => {
+
+        loading.value = true
+
+        try {
+
+            const res = await api.get('/projects/')
+
+            projects.value = res.data
+
+        } catch (err) {
+
+            console.error(
+                'Failed to load projects',
+                err
+            )
+
+        } finally {
+
+            loading.value = false
+        }
     }
 
-    const save = () => {
-        localStorage.setItem('projects', JSON.stringify(projects.value))
+    // CREATE PROJECT
+    const addProject = async (project: any) => {
+
+        const formData = new FormData()
+
+        formData.append(
+            'title',
+            project.title
+        )
+
+        formData.append(
+            'technologies',
+            project.technologies
+        )
+
+        formData.append(
+            'image',
+            project.image
+        )
+
+        const res = await api.post(
+            '/projects/',
+            formData,
+            {
+                headers: {
+                    'Content-Type':
+                        'multipart/form-data'
+                }
+            }
+        )
+
+        projects.value.unshift(res.data)
+
+        return res.data
     }
 
-    const addProject = (project: any) => {
-        project.id = Date.now()
-        projects.value.push(project)
-        save()
-    }
-
-    const deleteProject = (id: number) => {
-        projects.value = projects.value.filter(p => p.id !== id)
-        save()
-    }
-
-    const updateProject = (
+    // UPDATE PROJECT
+    const updateProject = async (
         id: number,
-        updated: any
-        ) => {
+        project: any
+    ) => {
+
+        const formData = new FormData()
+
+        formData.append(
+            'title',
+            project.title
+        )
+
+        formData.append(
+            'technologies',
+            project.technologies
+        )
+
+        // ONLY APPEND IMAGE IF FILE
+        if (
+            project.image &&
+            typeof project.image !== 'string'
+        ) {
+
+            formData.append(
+                'image',
+                project.image
+            )
+        }
+
+        const res = await api.patch(
+            `/projects/${id}/`,
+            formData,
+            {
+                headers: {
+                    'Content-Type':
+                        'multipart/form-data'
+                }
+            }
+        )
 
         const index =
             projects.value.findIndex(
-            p => p.id === id
+                p => p.id === id
             )
 
         if (index !== -1) {
 
-            projects.value[index] = {
-            ...projects.value[index],
-            ...updated
-            }
-
-            save()
+            projects.value[index] =
+                res.data
         }
+
+        return res.data
     }
 
-    const getById = (id: number) => {
-        return projects.value.find(p => p.id === id)
+    // DELETE PROJECT
+    // const deleteProject = async (
+    //     id: number
+    // ) => {
+
+    //     await api.delete(
+    //         `/projects/${id}/`
+    //     )
+
+    //     projects.value =
+    //         projects.value.filter(
+    //             p => p.id !== id
+    //         )
+    // }
+
+    const deleteProject = async (
+        id: number
+    ) => {
+
+        console.log(auth.accessToken)
+
+        await api.delete(
+            `/projects/${id}/`
+        )
+
+        projects.value =
+            projects.value.filter(
+                p => p.id !== id
+            )
     }
 
     return {
         projects,
+        loading,
         load,
         addProject,
         updateProject,
-        deleteProject,
-        getById
+        deleteProject
     }
 })
