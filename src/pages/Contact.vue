@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseInput from '@/components/ui/BaseInput.vue'
+import BaseTextArea from '@/components/ui/BaseTextArea.vue'
 import { ref } from 'vue'
 
 // FORM STATE
@@ -84,7 +85,7 @@ const submitForm = async () => {
           <div>
             <h3 class="font-semibold mb-2">Contact Info</h3>
             <p class="text-gray-500 text-sm">info@fixkraftdigital.com</p>
-            <p class="text-gray-500 text-sm">+254 7XX XXX XXX</p>
+            <p class="text-gray-500 text-sm">+254 748 929 891</p>
           </div>
 
           <div class="p-4 bg-gray-50 rounded-xl text-sm text-gray-600">
@@ -152,12 +153,14 @@ const submitForm = async () => {
             </select>
 
             <!-- MESSAGE -->
-            <textarea
+            <!-- <textarea
               v-model="form.message"
               rows="4"
               placeholder="Tell us about your project..."
               class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none"
-            ></textarea>
+            ></textarea> -->
+
+            <BaseTextArea v-model="form.message" placeholder="Tel us about your project..." />
 
             <!-- BUTTON -->
             <button

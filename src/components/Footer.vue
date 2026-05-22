@@ -53,7 +53,7 @@
                     <!-- Phone -->
                     <div class="flex items-center gap-2 hover:text-white transition">
                     <Phone class="w-4 h-4" />
-                    <a href="tel:+254700000000">
+                    <a href="tel:+254748929891">
                         {{ config.phone }}
                     </a>
                     </div>

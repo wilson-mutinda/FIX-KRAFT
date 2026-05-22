@@ -23,7 +23,7 @@ export const useSiteConfig = defineStore('siteConfig', () => {
   ])
 
   // FOOTER
-  const phone = ref('+254 700 000 000')
+  const phone = ref('+254 748 929 891')
   const location = ref('Nairobi, Kenya')
 
   // ======================
