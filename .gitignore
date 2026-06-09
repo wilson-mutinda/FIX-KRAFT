@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Django
+staticfiles/
+media/
+*.log
+db.sqlite3
+
+# Frontend (Vue)
+node_modules/
+dist/
+.DS_Store
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Archives and backups
+*.zip
+*.tar.gz
+*.bak
+
+# Environment files
+.env
+.env.local
+.env.*.local
