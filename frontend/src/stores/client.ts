@@ -1,3 +1,4 @@
+import { API_BASE_URI } from "@/config/api";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -13,7 +14,7 @@ export const useClientStore = defineStore('clients', {
 
             try {
                 const response = await axios.get(
-                    'http://127.0.0.1:8000/api/clients/'
+                    '${API_BASE_URI}/clients/'
                 )
 
                 this.clients = response.data
@@ -28,7 +29,7 @@ export const useClientStore = defineStore('clients', {
         async remove(id: number) {
             try {
                 await axios.delete(
-                    `http://127.0.0.1:8000/api/clients/${id}/`
+                    `${API_BASE_URI}/clients/${id}/`
                 )
 
                 this.clients = this.clients.filter(

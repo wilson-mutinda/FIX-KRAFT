@@ -1,3 +1,4 @@
+import { API_BASE_URI } from "@/config/api";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -24,7 +25,7 @@ export const usePaymentStore = defineStore('payments', {
         async load() {
             this.loading = true;
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/payment/');
+                const response = await axios.get('${API_BASE_URI}/payment/');
                 this.payments = response.data;
             } catch (error) {
                 console.error(error);
@@ -35,7 +36,7 @@ export const usePaymentStore = defineStore('payments', {
 
         async remove(id: number) {
             try {
-                await axios.delete(`http://127.0.0.1:8000/api/payment/${id}/`);
+                await axios.delete(`${API_BASE_URI}/payment/${id}/`);
                 this.payments = this.payments.filter(p => p.id !== id);
             } catch (error) {
                 console.error(error);

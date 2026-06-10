@@ -5,7 +5,7 @@ import { ref } from "vue";
 import { useAuthStore } from "./auth";
 
 const API_URL =
-    'http://127.0.0.1:8000/api'
+    '${API_BASE_URI}'
 
 export const useMediaStore =
     defineStore(

@@ -1,3 +1,4 @@
+import { API_BASE_URI } from "@/config/api";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -30,7 +31,7 @@ export const useQuotationStore = defineStore('quotations',  {
         async load() {
             this.loading = true;
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/quotation/');
+                const response = await axios.get('${API_BASE_URI}/quotation/');
                 this.quotations = response.data;
             } catch (error) {
                 console.error(error);
@@ -41,7 +42,7 @@ export const useQuotationStore = defineStore('quotations',  {
 
         async remove(id: number) {
             try {
-                await axios.delete(`http://127.0.0.1:8000/api/quotation/${id}/`);
+                await axios.delete(`${API_BASE_URI}/quotation/${id}/`);
                 this.quotations = this.quotations.filter(q => q.id !== id);
             } catch (error) {
                 console.error(error);
@@ -50,7 +51,7 @@ export const useQuotationStore = defineStore('quotations',  {
 
         async update(id: number, data: Partial<Quotation>) {
             try {
-                const response = await axios.patch(`http://127.0.0.1:8000/${id}/`, data);
+                const response = await axios.patch(`${API_BASE_URI}/quotation/${id}/`, data);
                 const index = this.quotations.findIndex(q => q.id === id);
 
                 if (index !== -1) {

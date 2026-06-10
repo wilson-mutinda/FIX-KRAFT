@@ -1,3 +1,4 @@
+import { API_BASE_URI } from "@/config/api";
 import axios from "axios";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -11,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref<any>(null)
 
     // BASE API URL
-    const API_URL = 'http://127.0.0.1:8000/api'
+    // const API_URL = 'http://127.0.0.1:8000/api'
 
     // COMPUTED
     const isAuthenticated = computed(() => !!accessToken.value)
@@ -20,7 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
     const login = async (username: string, password: string) => {
         try {
             
-            const response = await axios.post(`${API_URL}/token/`, {
+            const response = await axios.post(`${API_BASE_URI}/token/`, {
                 username,
                 password
             })
@@ -47,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
     // REGISTER
     const register = async (data: any) => {
         try {
-            await axios.post(`${API_URL}/register/`, data)
+            await axios.post(`${API_BASE_URI}/register/`, data)
 
             return {
                 success: true
@@ -67,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         try {
             
-            const response = await axios.get(`${API_URL}/me/`, {
+            const response = await axios.get(`${API_BASE_URI}/me/`, {
                 headers: {
                     Authorization: `Bearer ${accessToken.value}`
                 }

@@ -1,3 +1,4 @@
+import { API_BASE_URI } from "@/config/api";
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -16,7 +17,7 @@ export const useInquiryStore = defineStore('inquiries', {
 
             try {
                 const response = await axios.get(
-                    'http://127.0.0.1:8000/api/inquiries/'
+                    '${API_BASE_URI}/inquiries/'
                 )
 
                 this.inquiries = response.data
@@ -31,7 +32,7 @@ export const useInquiryStore = defineStore('inquiries', {
         async remove(id: number) {
             try {
                 await axios.delete(
-                    `http://127.0.0.1:8000/api/inquiries/${id}/`
+                    `${API_BASE_URI}/inquiries/${id}/`
                 )
                 this.inquiries = this.inquiries.filter(
                     item => item.id !== id
@@ -45,7 +46,7 @@ export const useInquiryStore = defineStore('inquiries', {
         async updateStatus(id: number, status: string) {
             try {
                 await axios.patch(
-                    `http://127.0.0.1:8000/api/inquiries/${id}/`,
+                    `${API_BASE_URI}/inquiries/${id}/`,
                     {
                         status
                     }
