@@ -3,9 +3,10 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 import { useAuthStore } from "./auth";
+import { API_BASE_URI } from "@/config/api";
 
 const API_URL =
-    '${API_BASE_URI}'
+    `${API_BASE_URI}`
 
 export const useMediaStore =
     defineStore(

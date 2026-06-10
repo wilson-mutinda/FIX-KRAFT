@@ -25,7 +25,7 @@ export const usePaymentStore = defineStore('payments', {
         async load() {
             this.loading = true;
             try {
-                const response = await axios.get('${API_BASE_URI}/payment/');
+                const response = await axios.get(`${API_BASE_URI}/payment/`);
                 this.payments = response.data;
             } catch (error) {
                 console.error(error);

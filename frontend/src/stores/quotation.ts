@@ -31,7 +31,7 @@ export const useQuotationStore = defineStore('quotations',  {
         async load() {
             this.loading = true;
             try {
-                const response = await axios.get('${API_BASE_URI}/quotation/');
+                const response = await axios.get(`${API_BASE_URI}/quotation/`);
                 this.quotations = response.data;
             } catch (error) {
                 console.error(error);

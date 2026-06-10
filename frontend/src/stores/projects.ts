@@ -5,7 +5,7 @@ import axios from 'axios'
 import { useAuthStore } from './auth'
 import { API_BASE_URI } from '@/config/api'
 
-const API_URL = '${API_BASE_URI}'
+const API_URL = `${API_BASE_URI}`
 
 export const useProjectsStore = defineStore('projects', () => {
 
@@ -17,7 +17,7 @@ export const useProjectsStore = defineStore('projects', () => {
 
     // AXIOS INSTANCE
     const api = axios.create({
-        baseURL: API_BASE_URI
+        baseURL: API_URL
     })
 
     // TOKEN INTERCEPTOR

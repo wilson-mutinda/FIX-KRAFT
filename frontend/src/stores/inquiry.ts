@@ -17,7 +17,7 @@ export const useInquiryStore = defineStore('inquiries', {
 
             try {
                 const response = await axios.get(
-                    '${API_BASE_URI}/inquiries/'
+                    `${API_BASE_URI}/inquiries/`
                 )
 
                 this.inquiries = response.data

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseTextArea from '@/components/ui/BaseTextArea.vue'
+import { API_BASE_URI } from '@/config/api'
 import axios from 'axios'
 import { ref } from 'vue'
 
@@ -42,7 +43,7 @@ const submitForm = async () => {
   delete (payload as any).services // remove the array field
 
   try {
-    await axios.post('http://127.0.0.1:8000/api/inquiries/', payload)
+    await axios.post(`${API_BASE_URI}/inquiries/`, payload)
     success.value = true
 
     // RESET FORM

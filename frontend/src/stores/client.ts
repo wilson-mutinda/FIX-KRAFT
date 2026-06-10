@@ -14,7 +14,7 @@ export const useClientStore = defineStore('clients', {
 
             try {
                 const response = await axios.get(
-                    '${API_BASE_URI}/clients/'
+                    `${API_BASE_URI}/clients/`
                 )
 
                 this.clients = response.data
