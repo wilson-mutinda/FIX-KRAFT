@@ -26,27 +26,27 @@ from io import StringIO
 import sys
 
 # TEMPORARY MIGRATION VIEW - REMOVE AFTER USE
-def run_migrations_view(request):
-    SECRET_KEY = 'FixKraft_Migration_2026'
-    if request.GET.get('secret') != SECRET_KEY:
-        return HttpResponse('Forbidden', status=403)
+# def run_migrations_view(request):
+#     SECRET_KEY = 'FixKraft_Migration_2026'
+#     if request.GET.get('secret') != SECRET_KEY:
+#         return HttpResponse('Forbidden', status=403)
     
-    output = StringIO()
-    sys.stdout = output
+#     output = StringIO()
+#     sys.stdout = output
 
-    try:
-        call_command('migrate', interactive=False, stdout=output)
-        call_command('collectstatic', interactive=False, stdout=output)
-        return HttpResponse(f"<pre>SUCCESS\n\n{output.getvalue()}</pre>")
-    except Exception as e:
-        return HttpResponse(f"<pre>ERROR: {e}\n\n{output.getvalue()}</pre>")
-    finally:
-        sys.stdout = sys.__stdout__
+#     try:
+#         call_command('migrate', interactive=False, stdout=output)
+#         call_command('collectstatic', interactive=False, stdout=output)
+#         return HttpResponse(f"<pre>SUCCESS\n\n{output.getvalue()}</pre>")
+#     except Exception as e:
+#         return HttpResponse(f"<pre>ERROR: {e}\n\n{output.getvalue()}</pre>")
+#     finally:
+#         sys.stdout = sys.__stdout__
 
 urlpatterns = [
 
     # TEMPORARY - remove after running once
-    path('api/secret-migrate/', run_migrations_view, name='run_migrations'),
+    # path('api/secret-migrate/', run_migrations_view, name='run_migrations'),
     
     path('admin/', admin.site.urls),
 
