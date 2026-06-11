@@ -2,8 +2,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { API_BASE_URI } from '@/config/api'
 
-const emit = defineEmits(['toggle-sidebar'])
+const emit = defineEmits(['toggle-sidebar', 'view-inquiry'])
 const router = useRouter()
 
 const unreadCount = ref(0)
@@ -22,7 +23,7 @@ const recentInquiries = ref<Inquiry[]>([])
 
 const fetchUnreadCount = async () => {
   try {
-    const res = await axios.get('/api/inquiries/unread_count/')
+    const res = await axios.get(`${API_BASE_URI}/inquiries/unread_count/`)
     unreadCount.value = res.data.count
   } catch (error) {
     console.error('Failed to fetch unread count', error)
@@ -31,7 +32,7 @@ const fetchUnreadCount = async () => {
 
 const fetchRecentInquiries = async () => {
   try {
-    const res = await axios.get('/api/inquiries/?ordering=-created_at&limit=5')
+    const res = await axios.get(`${API_BASE_URI}/inquiries/?ordering=-created_at&limit=5`)
     recentInquiries.value = res.data
   } catch (error) {
     console.error('Failed to fetch recent inquiries', error)
@@ -47,7 +48,7 @@ const toggleDropdown = () => {
 
 const goToInquiry = (id: number) => {
   showDropdown.value = false
-  router.push(`/admin/inquiries/${id}`)
+  emit('view-inquiry', id)
 }
 
 let interval: number

@@ -9,6 +9,7 @@ import { useQuotationStore } from '@/stores/quotation'
 import EditQuotationModal from './EditQuotationModal.vue'
 import html2pdf from 'html2pdf.js'
 import axios from 'axios'
+import { API_BASE_URI } from '@/config/api.ts'
 
 const store = useQuotationStore()
 
@@ -373,7 +374,7 @@ const downloadQuotationPDF = async () => {
 const emailQuotation = async () => {
   if (!selectedQuotation.value) return
   try {
-    const response = await axios.post(`http://127.0.0.1:8000/api/quotation/${selectedQuotation.value.id}/email_quotation/`)
+    const response = await axios.post(`${API_BASE_URI}/quotation/${selectedQuotation.value.id}/email_quotation/`)
     alert('Quotation emailed successfully!')
   } catch (error) {
     console.error('Failed to email quotation', error)

@@ -14,6 +14,9 @@ import {
   MessageSquare,
   LogOut
 } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
+import { API_BASE_URI } from '@/config/api';
 
 defineProps<{
   open: boolean
@@ -76,6 +79,23 @@ const handleLogout = () => {
   auth.logout()
   router.push('/login')
 }
+
+const counts = ref({
+  inquiries_new: 0,
+  clients_total: 0,
+  quotations_pending: 0,
+  payments_total: 0
+})
+
+onMounted(async () => {
+  try {
+    const res = await axios.get(`${API_BASE_URI}/counts/`)
+    counts.value = res.data
+  } catch (error) {
+    console.error('Failed to fetch counts', error)
+  }
+})
+
 </script>
 
 <template>
@@ -116,6 +136,15 @@ const handleLogout = () => {
         >
           {{ link.name }}
         </span>
+
+        <!-- Badge for inquiries -->
+         <span v-if="link.name === 'Inquiries' && counts.inquiries_new > 0" class="bg-green-500 text-white text-xs rounded-full px-2 py-0.5">
+          {{ counts.inquiries_new }}
+         </span>
+         <!-- Similar for quotations -->
+          <span v-if="link.name === 'Quotations' && counts.quotations_pending > 0" class="bg-yellow-500 text-white text-sm rounded-full px-2 py-0.5">
+            {{ counts.quotations_pending }}
+          </span>
 
       </button>
 

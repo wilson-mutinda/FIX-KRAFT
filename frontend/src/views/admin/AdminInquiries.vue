@@ -9,6 +9,7 @@ import ViewModal from '@/components/admin/ViewModal.vue'
 import { useInquiryStore } from '@/stores/inquiry'
 
 import axios from 'axios'
+import { API_BASE_URI } from '@/config/api'
 
 const store = useInquiryStore()
 
@@ -246,7 +247,7 @@ const generateQuotationNumber = () => {
 // Fetch existing quotation for this inquiry (if any)
 const fetchQuotation = async (inquiryId: number) => {
   try {
-    const res = await axios.get(`http://127.0.0.1:8000/api/quotation/?inquiry=${inquiryId}`)
+    const res = await axios.get(`${API_BASE_URI}/quotation/?inquiry=${inquiryId}`)
     quotation.value = res.data.length ? res.data[0] : null
   } catch (error) {
     console.error('Failed to fetch quotation', error)
@@ -265,7 +266,7 @@ const createQuotation = async () => {
       line_items: quotationForm.value.line_items,
       status: 'pending'
     }
-    const res = await axios.post('http://127.0.0.1:8000/api/quotation/', payload)
+    const res = await axios.post(`${API_BASE_URI}/quotation/`, payload)
     quotation.value = res.data
     showQuotationForm.value = false
     quotationForm.value = { line_items: [], description: '', valid_until: '' }
@@ -296,8 +297,17 @@ const computedTotal = computed(() => {
 // prepareQuotationForm
 const prepareQuotationForm = () => {
     const services = getServiceArray()
+
+    // Default valid until = 3o days from today
+    const defaultDate = new Date()
+    defaultDate.setDate(defaultDate.getDate() + 30)
+    const year = defaultDate.getFullYear()
+    const month = String(defaultDate.getMonth() + 1).padStart(2, '0')
+    const day = String(defaultDate.getDate()).padStart(2, '0')
+    const defaultValidUntil = `${year}-${month}-${day}`
+
     quotationForm.value = {
-        valid_until: '',
+        valid_until: defaultValidUntil,
         description: '',
         line_items: services.map((service: string) => ({ service, price: 0 }))
     }
@@ -613,6 +623,7 @@ const prepareQuotationForm = () => {
         <input
             v-model="quotationForm.valid_until"
             type="date"
+            required
             class="w-full border rounded-xl px-3 py-2 text-sm"
         />
 

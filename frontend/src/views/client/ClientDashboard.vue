@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { API_BASE_URI } from '@/config/api';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
@@ -56,8 +57,8 @@ const loading = ref(true)
 onMounted(async () => {
     try {
         const [inqRes, quotRes] = await Promise.all([
-            axios.get('/api/inquiries/my_inquiries/'),
-            axios.get('/api/quotation/my_quotations/')
+            axios.get(`${API_BASE_URI}/inquiries/my_inquiries/`),
+            axios.get(`${API_BASE_URI}/quotation/my_quotations/`)
         ])
         inquiries.value = inqRes.data
         quotations.value = quotRes.data
