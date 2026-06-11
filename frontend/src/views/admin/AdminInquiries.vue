@@ -11,6 +11,8 @@ import { useInquiryStore } from '@/stores/inquiry'
 import axios from 'axios'
 import { API_BASE_URI } from '@/config/api'
 
+let interval: number
+
 const store = useInquiryStore()
 
 // ========== Filters & Search ==========
@@ -44,6 +46,13 @@ const isLoading = computed(() => store.loading)
 // ========== Data ==========
 onMounted(() => {
   store.load()
+  interval = setInterval(() => {
+    store.load()
+  }, 30000);
+})
+
+onMounted(() => {
+  clearInterval(interval)
 })
 
 // Reset page when filters/sort change

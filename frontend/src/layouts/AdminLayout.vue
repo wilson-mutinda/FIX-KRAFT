@@ -7,6 +7,7 @@ import StatusBadge from '@/components/admin/StatusBadge.vue'
 import { useInquiryStore } from '@/stores/inquiry'
 import axios from 'axios'
 import { API_BASE_URI } from '@/config/api'
+import { useCountsStore } from '@/stores/counts'
 
 const sidebarOpen = ref(true)
 
@@ -27,6 +28,8 @@ interface Inquiry {
 const selectedInquiry = ref<Inquiry | null>(null)
 const showInquiryModal = ref(false)
 
+const countsStore = useCountsStore()
+
 const handleViewInquiry = async (id: number) => {
   const store = useInquiryStore()
   const inquiry = store.inquiries.find((i: any) => i.id === id)
@@ -37,12 +40,14 @@ const handleViewInquiry = async (id: number) => {
     // Mark as read
     try {
       await axios.patch(`${API_BASE_URI}/inquiries/${id}/mark_read/`)
+      countsStore.fetchCounts()
       // Decrease unread count on topbar
     } catch (error) {
       console.error('Failed to mark as read', error)
     }
   }
 }
+
 </script>
 
 <template>
