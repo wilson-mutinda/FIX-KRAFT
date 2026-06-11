@@ -50,7 +50,7 @@ urlpatterns = [
 
     path('api/', include('payment.urls')),
 
-    path('api/', include('dashboard.urls')),
+    path('api/dashboard/', include('dashboard.urls')),
 ]
 
 # MEDIA FILES

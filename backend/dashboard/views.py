@@ -20,7 +20,7 @@ def dashboard_stats(request):
     total_inquiries = Inquiry.objects.count()
     total_clients = Client.objects.count()
     total_quotations = Quotation.objects.count()
-    pending_quotations = Quotation.objects.count()
+    pending_quotations = Quotation.objects.filter(status='pending').count()
     total_payments = Payment.objects.count()
 
     # Weekly visitors (if there is a Visitor model, else derive from inquiry creation dates)
@@ -40,7 +40,7 @@ def dashboard_stats(request):
     service_counts = [item['count'] for item in service_dist]
 
     # Recent Projects (last 5)
-    recent_projects = Projects.objects.order_by('-created-by')[:5]
+    recent_projects = Projects.objects.order_by('-created_at')[:5]
     recent_projects_list = [{'id': p.id, 'title': p.title} for p in recent_projects]
 
     # Recent activities (last 5 actions - can be derived from model changes; for simplicity, use recent inquiries)
