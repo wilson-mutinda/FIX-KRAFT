@@ -32,3 +32,10 @@ class InquiryViewSet(viewsets.ModelViewSet):
         inquiries = self.get_queryset().filter(client=client)
         serializer = self.get_serializer(inquiries, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'])
+    def mark_read(self, request, pk=None):
+        inquiry = self.get_object()
+        inquiry.status = 'read'
+        inquiry.save()
+        return Response({'status': 'read'})

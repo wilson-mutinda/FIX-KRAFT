@@ -8,6 +8,12 @@ from .serializers import (
     UserSerializer
 )
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from inquiry.models import Inquiry
+from clients.models import Client
+from quotation.models import Quotation
+from payment.models import Payment
 
 # REGISTER
 class RegisterView(generics.CreateAPIView):
@@ -27,3 +33,12 @@ class UserView(generics.RetrieveAPIView):
     def get_object(self):
 
         return self.request.user
+
+@api_view(['GET'])
+def get_counts(request):
+    return Response({
+        'inquiries_new': Inquiry.objects.filter(status='new').count(),
+        'clients_total': Client.objects.count(),
+        'quotations_pending': Quotation.objects.filter(status='pending').count(),
+        'payments_total': Payment.objects.count(),
+    })    

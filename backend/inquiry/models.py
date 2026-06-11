@@ -7,6 +7,7 @@ class Inquiry(models.Model):
 
     STATUS_CHOICES = [
         ('new', 'New'),
+        ('read', 'Read'),
         ('quoted', 'Quoted'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
