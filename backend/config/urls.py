@@ -31,7 +31,7 @@ from accounts.views import get_counts
 urlpatterns = [
     
     path('api/counts/', get_counts, name='get_counts'),
-    
+
     path('admin/', admin.site.urls),
 
     path('api/', include('accounts.urls')),
@@ -49,6 +49,8 @@ urlpatterns = [
     path('api/', include('quotation.urls')),
 
     path('api/', include('payment.urls')),
+
+    path('api/', include('dashboard.urls')),
 ]
 
 # MEDIA FILES
