@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'quotation',
     'payment',
     'sesame',
-    'dashboard'
+    'dashboard',
+    'blog'
 ]
 
 MIDDLEWARE = [
