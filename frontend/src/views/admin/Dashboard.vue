@@ -3,7 +3,7 @@ import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import VisitorsChart from '@/components/dashboard/VisitorsChart.vue'
 import ServicesChart from '@/components/dashboard/ServicesChart.vue'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { API_BASE_URI } from '@/config/api'
 import { useAuthStore } from '@/stores/auth'
@@ -25,6 +25,8 @@ const dashboardData = ref({
   },
   visitors: [] as number[],
   service_labels: [] as string[],
+  top_clients: [] as any[],
+  recent_quotations: [] as any[],
   service_data: [] as number[],
   recent_projects: [] as any[],
   activities: [] as { message: string; created_at: string }[]
@@ -39,15 +41,54 @@ const statsCards = computed(() => [
   { title: 'Payments', value: dashboardData.value.stats.payments, icon: '💰', color: 'from-teal-500 to-cyan-500' }
 ])
 
+// Count-up animation: numbers will transition smoothly
+// Create a separate ref for animated values and watch the real values
+const animatedStats = ref({ ...dashboardData.value.stats })
+watch(() => dashboardData.value.stats, (newStats) => {
+  // Animate each stat from current to new value
+  for (const key in newStats) {
+    const target = newStats[key as keyof typeof animatedStats.value]
+    const start = animatedStats.value[key as keyof typeof animatedStats.value]
+    if (start === target) continue
+    const duration = 500
+    const step = (target - start) / (duration / 16)
+    let current = start
+    const interval = setInterval(() => {
+      current += step
+      if ((step > 0 && current >= target) || (step < 0 && current <= target)) {
+        animatedStats.value[key as keyof typeof animatedStats.value] = target
+        clearInterval(interval)
+      } else {
+        animatedStats.value[key as keyof typeof animatedStats.value] = Math.floor(current)
+      }
+    }, 16);
+  }
+}, { deep: true })
+
+// Date and time greeting
+const greeting = computed(() => {
+  const hour = new Date().getHours()
+  let timeOfDay = 'morning'
+  if (hour >= 12 && hour < 18) timeOfDay = 'afternoon'
+  if (hour >= 18) timeOfDay = 'evening'
+  const userName = auth.user?.username || 'Admin'
+  const today = dayjs().format('dddd, MMMM D, YYYY')
+  return `Good ${timeOfDay}, ${userName}. Today is ${today}.`
+})
+
 const formatRelativeTime = (isoString: string) => {
   return dayjs(isoString).fromNow()
 }
+
+// fetch visitors trend
+const visitorTrend = ref(0)
 
 const fetchDashboardData = async () => {
   loading.value = true
   try {
     const res = await axios.get(`${API_BASE_URI}/dashboard/stats/`)
     dashboardData.value = res.data
+    visitorTrend.value = res.data.visitor_trend
   } catch (error) {
     console.error('Failed to fetch dashboard stats', error)
   } finally {
@@ -55,20 +96,29 @@ const fetchDashboardData = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await auth.fetchCurrentUser()
   fetchDashboardData()
 })
+
 </script>
 
 <template>
   <div class="space-y-8">
-    <!-- HEADER -->
+    <!-- HEADER with refresh button -->
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-text">Dashboard</h1>
-        <p class="text-text/60 mt-1">Welcome back, {{ auth.user?.username || 'Admin' }} 👋</p>
+        <p class="text-text/60 mt-1">{{ greeting }}</p>
       </div>
-      <BaseButton>+ New Project</BaseButton>
+      
+      <!-- Base button with refresh button -->
+       <div class="flex items-center gap-3">
+        <BaseButton>+ New Project</BaseButton>
+        <button @click="fetchDashboardData" class="p-2 rounded-full hover:bg-gray-100 transition" title="Refresh Dashboard">
+        🔄
+      </button>
+       </div>
     </div>
 
     <!-- HERO (unchanged) -->
@@ -81,13 +131,15 @@ onMounted(() => {
       <div class="absolute -right-20 -top-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
     </div>
 
-    <!-- STATS CARDS (grid of 3 or 6) -->
+    <!-- STATS CARDS with animated numbers -->
     <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
       <div v-for="stat in statsCards" :key="stat.title" class="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm hover:shadow-xl transition duration-300">
         <div class="flex items-center justify-between mb-6">
           <div>
             <p class="text-sm text-gray-500">{{ stat.title }}</p>
-            <h2 class="text-3xl font-bold mt-2">{{ stat.value }}</h2>
+            <h2 class="text-3xl font-bold mt-2">
+              {{ animatedStats[stat.title.toLowerCase() as keyof typeof animatedStats] }}
+            </h2>
           </div>
           <div class="h-14 w-14 rounded-2xl flex items-center justify-center text-2xl bg-gradient-to-br text-white" :class="stat.color">
             {{ stat.icon }}
@@ -101,15 +153,61 @@ onMounted(() => {
     <div class="grid lg:grid-cols-3 gap-6">
       <BaseCard class="lg:col-span-2">
         <div class="flex items-center justify-between mb-6">
-          <div><h2 class="text-xl font-semibold">Website Analytics</h2><p class="text-sm text-gray-500">Weekly visitor performance</p></div>
-          <div class="text-sm text-green-500 font-medium">+18%</div>
+          <div>
+            <h2 class="text-xl font-semibold">Website Analytics</h2>
+            <p class="text-sm text-gray-500">Weekly visitor performance</p>
+          </div>
+          <div class="text-sm font-medium" :class="visitorTrend >= 0 ? 'text-green-500' : 'text-red-500'">
+            {{ visitorTrend >= 0 ? '+' : '' }}{{ visitorTrend }}
+          </div>
         </div>
         <VisitorsChart :data="dashboardData.visitors" :loading="loading" />
       </BaseCard>
 
       <BaseCard>
-        <div class="mb-6"><h2 class="text-xl font-semibold">Services Distribution</h2><p class="text-sm text-gray-500">Most requested services</p></div>
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold">Services Distribution</h2>
+          <p class="text-sm text-gray-500">Most requested services</p>
+        </div>
         <ServicesChart :labels="dashboardData.service_labels" :data="dashboardData.service_data" :loading="loading" />
+      </BaseCard>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Basecard for top clients -->
+      <BaseCard>
+        <h2 class="text-xl font-semibold mb-4">Top Clients</h2>
+        <div class="space-y-3">
+          <div v-for="client in dashboardData.top_clients" :key="client.name" class="flex justify-between items-center border-b pb-2">
+            <span class="text-sm font-medium">{{ client.name }}</span>
+            <span class="text-sm text-gray-500">{{ client.count }} inquiries</span>
+          </div>
+          <div v-if="dashboardData.top_clients.length === 0 && !loading" class="text-center text-gray-500 py-4">
+            No clients yet
+          </div>
+        </div>
+      </BaseCard>
+
+      <!-- Recent Quotations -->
+      <BaseCard>
+        <h2 class="text-xl font-semibold mb-4">Recent Quotations</h2>
+        <div class="space-y-3">
+          <div v-for="q in dashboardData.recent_quotations" :key="q.number" class="flex justify-between items-center border-b pb-2">
+            <div class="">
+              <p class="text-sm font-medium">{{ q.client }}</p>
+              <p class="text-xs text-gray-500">{{ q.number }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm font-semibold">KSh {{ q.amount.toLocaleString() }}</p>
+              <p class="text-sm" :class="{'text-yellow-600': q.status === 'pending', 'text-green-600': q.status === 'approved'}">
+                {{ q.status }}
+              </p>
+            </div>
+          </div>
+          <div v-if="dashboardData.recent_quotations.length === 0 && !loading" class="text-center text-gray-500 py-4">
+            No quotations yet
+          </div>
+        </div>
       </BaseCard>
     </div>
 
@@ -132,10 +230,13 @@ onMounted(() => {
       </div>
     </BaseCard>
 
-    <!-- LOWER GRID -->
+    <!-- RECENT PROJECTS & ACTIVITY -->
     <div class="grid lg:grid-cols-3 gap-6">
       <BaseCard class="lg:col-span-2">
-        <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-semibold">Recent Projects</h2><router-link to="/admin/projects" class="text-primary text-sm">View all</router-link></div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold">Recent Projects</h2>
+          <router-link to="/admin/projects" class="text-primary text-sm">View all</router-link>
+        </div>
         <div class="space-y-4">
           <div v-for="project in dashboardData.recent_projects" :key="project.id" class="flex items-center justify-between p-4 rounded-xl border hover:bg-gray-50 transition">
             <div><h3 class="font-medium">{{ project.title }}</h3><p class="text-sm text-gray-500">Recently updated</p></div><div class="text-xl">→</div>
