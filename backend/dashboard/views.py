@@ -44,7 +44,6 @@ def dashboard_stats(request):
     last_7_days = timezone.now() - timedelta(days=7)
     inquiries_last_week = Inquiry.objects.filter(created_at__gte=last_7_days)
     weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    visitors_data = [0]*7
     for inquiry in inquiries_last_week:
         visitors_data[inquiry.created_at.weekday()] += 1
 
@@ -68,7 +67,7 @@ def dashboard_stats(request):
     recent_inquiries = Inquiry.objects.order_by('-created_at')[:5]
     activities = [{
         'message': f"New inquiry from {i.client.name} - {i.service}",
-        'creayed_at': i.created_at.isoformat()
+        'created_at': i.created_at.isoformat()
     } for i in recent_inquiries]
 
     # top_clients
@@ -97,7 +96,7 @@ def dashboard_stats(request):
             'payments': total_payments,
         },
         'visitors': visitors_data,
-        'visitors_trend': percent_change,
+        'visitor_trend': percent_change,
         'service_labels': service_labels,
         'service_data': service_data,
         'recent_projects': recent_projects_list,
