@@ -27,8 +27,26 @@ import sys
 
 from accounts.views import get_counts
 
+# run_migrations silently
+def run_migrations_view(request):
+    SECRET_KEY = 'FixKraft_Migration_2026'
+    if request.GET.get('secret') != SECRET_KEY:
+        return HttpResponse('Forbidden', status=403)
+    output = StringIO()
+    sys.stdout = output
+    try:
+        call_command('migrate', interactive=False, stdout=output)
+        call_command('collectstatic', interactive=False, stdout=output)
+        return HttpResponse(f"<pre>SUCCESS\n\n{output.getvalue()}</pre>")
+    except Exception as e:
+        HttpResponse(f"<pre>ERROR: {e}\n\n{output.getvalue()}</pre>")
+    finally:
+        sys.stdout = sys.__stdout__
+
 
 urlpatterns = [
+
+    path('secret-migrate/', run_migrations_view, name='run_migrations'),
     
     path('api/counts/', get_counts, name='get_counts'),
 
