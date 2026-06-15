@@ -7,7 +7,7 @@ class BlogPost(models.Model):
         ('published', 'Published'),
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=100)
     excerpt = models.TextField(blank=True)
     content = models.TextField()
     image = models.ImageField(upload_to='blog/', blank=True, null=True)
