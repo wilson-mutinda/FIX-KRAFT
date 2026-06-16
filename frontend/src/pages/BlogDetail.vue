@@ -1,36 +1,72 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import { usePublicBlogStore } from '@/stores/publicBlog';
+import { useHead } from '@vueuse/head';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const store = usePublicBlogStore();
 const post = ref<any>(null);
 const loading = ref(true);
 
+const siteUrl = 'https://fixkraftdigital.co.ke';
+
 onMounted(async () => {
   const slug = route.params.slug as string;
   post.value = await store.getPostBySlug(slug);
   loading.value = false;
 });
+
+// Dynamically update <head> when post loads
+useHead(
+  computed(() => {
+    if (!post.value) {
+      return {
+        title: 'Blog | FixKraft Digital',
+        meta: [
+          { name: 'description', content: 'Insights and updates from FixKraft Digital' },
+        ],
+      };
+    }
+    const title = post.value.title;
+    const description = post.value.excerpt || `${title} - Learn more at FixKraft Digital.`;
+    const image = post.value.image || 'https://fixkraftdigital.co.ke/og-default.jpg';
+    const url = `${siteUrl}/blog/${post.value.slug}`;
+    
+    return {
+      title: `${title} | FixKrat Digital`,
+      meta: [
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:image', content: image },
+        { property: 'og:url', content: url },
+        { property: 'og:type', content: 'article' },
+        { name: 'twittercard', content: 'summary_large_image' },
+      ],
+    };
+  })
+);
+
 </script>
 
 <template>
   <div class="bg-white dark:bg-gray-900 min-h-screen py-20">
     <div class="max-w-4xl mx-auto px-6">
-      <!-- Back Link -->
+      <!-- Back link -->
        <div class="mb-8">
         <router-link to="/blog" class="text-primary hover:underline inline-flex items-center gap-1">
           ← Back to Blog
         </router-link>
        </div>
 
-      <div v-if="loading" class="text-center py-20">Loading...</div>
-      <div v-else-if="!post" class="text-center py-20">
+       <div v-if="loading" class="text-center py-20">Loading...</div>
+       <div v-else-if="!post" class="text-center py-20">
         <p class="text-gray-500">Post not found.</p>
         <router-link to="/blog" class="text-primary mt-4 inline-block">← Back to blog</router-link>
-      </div>
-      <div v-else class="">
+       </div>
+
+       <div v-else class="">
         <article class="prose dark:prose-invert lg:prose-lg max-w-none">
           <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
           <div class="flex items-center gap-4 text-gray-500 text-sm mb-8">
@@ -55,7 +91,7 @@ onMounted(async () => {
             </router-link>
           </div>
          </div>
-      </div>
+       </div>
     </div>
   </div>
 </template>

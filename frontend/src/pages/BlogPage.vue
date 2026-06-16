@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { usePublicBlogStore } from '@/stores/publicBlog';
+import { useHead } from '@vueuse/head';
 
 const store = usePublicBlogStore();
 onMounted(() => store.load());
+
+useHead({
+  title: 'Blog | FixKraft Digital',
+  meta: [
+    { name: 'description', content: 'Practical advice, industry news, and insights from FixKraft Digital.' },
+  ],
+});
 </script>
 
 <template>

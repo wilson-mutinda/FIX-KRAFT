@@ -12,10 +12,14 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useThemeStore } from './stores/theme'
 import { useAuthStore } from './stores/auth'
+import { createHead } from '@vueuse/head'
+
+const head = createHead()
 
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(head)
 app.use(router)
 
 // AOS init
