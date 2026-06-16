@@ -1,6 +1,9 @@
 from rest_framework.routers import DefaultRouter
-from .views import BlogPostViewSet
+from .views import BlogPostViewSet, sitemap
+from django.urls import path
 
 router = DefaultRouter()
 router.register(r'blog', BlogPostViewSet, basename='blog')
-urlpatterns = router.urls
+urlpatterns = [
+    path('sitemap.xml', sitemap, name='sitemap'),
+] + router.urls
