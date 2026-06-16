@@ -17,7 +17,8 @@ const links = [
   { name: 'Process', path: '/process' },
   { name: 'Services', path: '/services' },
   { name: 'Projects', path: '/projects' },
-  { name: 'Contact', path: '/contact' }
+  { name: 'Contact', path: '/contact' },
+  { name: 'Blog', path: '/blog' },
 ]
 
 // TOGGLE MENU
@@ -187,13 +188,6 @@ const config = useSiteConfig()
           >
             {{ link.name }}
           </button>
-
-          <!-- <button
-            @click="openContactPage"
-            class="bg-primary text-white px-4 py-2 rounded-lg mt-2"
-          >
-            Start Project
-          </button> -->
 
           <base-button @click="openContactPage">Start Project</base-button>
 

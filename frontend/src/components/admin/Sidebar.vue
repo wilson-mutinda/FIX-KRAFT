@@ -12,7 +12,8 @@ import {
   Settings,
   Image,
   MessageSquare,
-  LogOut
+  LogOut,
+  FileText
 } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref } from 'vue';
 import axios from 'axios';
@@ -73,6 +74,11 @@ const links = [
     name: 'Settings',
     path: '/admin/settings',
     icon: Settings
+  },
+  {
+    name: 'Blog',
+    path: '/admin/blog',
+    icon: FileText
   }
 ]
 
