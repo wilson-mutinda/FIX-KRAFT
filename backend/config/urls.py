@@ -71,6 +71,8 @@ urlpatterns = [
     path('api/dashboard/', include('dashboard.urls')),
 
     path('api/', include('blog.urls')),
+
+    path('api/', include('testimonials.urls')),
 ]
 
 # MEDIA FILES
