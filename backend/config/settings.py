@@ -7,6 +7,9 @@ from datetime import timedelta
 import dj_database_url
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,9 +81,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database – uses DATABASE_URL from environment
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
+DJANGO_ENV = os.environ.get('DJANGO_ENV', 'production')
+
+if DJANGO_ENV == 'development':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
