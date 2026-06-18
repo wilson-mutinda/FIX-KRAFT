@@ -79,6 +79,11 @@ const links = [
     name: 'Blog',
     path: '/admin/blog',
     icon: FileText
+  },
+  {
+    name: 'Testimonials',
+    path: '/admin/testimonials',
+    icon: MessageSquare
   }
 ]
 

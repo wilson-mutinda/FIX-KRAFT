@@ -17,6 +17,7 @@ import AdminPayments from '@/views/admin/AdminPayments.vue'
 import AdminProjects from '@/views/admin/AdminProjects.vue'
 import AdminQuotations from '@/views/admin/AdminQuotations.vue'
 import AdminServices from '@/views/admin/AdminServices.vue'
+import AdminTestimonials from '@/views/admin/AdminTestimonials.vue'
 import Dashboard from '@/views/admin/Dashboard.vue'
 import Messages from '@/views/admin/Messages.vue'
 import Settings from '@/views/admin/Settings.vue'
@@ -46,6 +47,7 @@ const router = createRouter({
       { path: 'payments', component: AdminPayments },
       { path: 'quotations', component: AdminQuotations },
       { path: 'blog', component: AdminBlog },
+      { path: 'testimonials', component: AdminTestimonials },
     ]},
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register }
