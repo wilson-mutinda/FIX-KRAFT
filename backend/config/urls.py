@@ -73,6 +73,8 @@ urlpatterns = [
     path('api/', include('blog.urls')),
 
     path('api/', include('testimonials.urls')),
+
+    path('api/', include('services.urls')),
 ]
 
 # MEDIA FILES
