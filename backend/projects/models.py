@@ -17,7 +17,9 @@ class Projects(models.Model):
     )
 
     image = models.ImageField(
-        upload_to='projects/'
+        upload_to='projects/',
+        blank=True,
+        null=True
     )
 
     technologies = models.CharField(
