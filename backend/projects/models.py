@@ -9,7 +9,8 @@ class Projects(models.Model):
     slug = models.SlugField(
         unique=True,
         blank=True,
-        null=True
+        null=True,
+        max_length=200
     )
 
     description = models.TextField(
