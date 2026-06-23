@@ -1,487 +1,269 @@
 <script setup lang="ts">
-import {
-  ref,
-  onMounted
-} from 'vue'
-
-import {
-  useProjectsStore
-} from '@/stores/projects'
-
-import {
-  useToastStore
-} from '@/stores/toast'
-
-import BaseButton from '@/components/ui/BaseButton.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
-import BaseModal from '@/components/ui/BaseModal.vue'
+import DeleteModal from '@/components/admin/DeleteModal.vue';
+import PageHeader from '@/components/admin/PageHeader.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseTextArea from '@/components/ui/BaseTextArea.vue';
+import { useProjectsStore } from '@/stores/projects';
+import { onMounted, ref } from 'vue';
 
 const store = useProjectsStore()
-const toast = useToastStore()
-
-onMounted(async () => {
-  await store.load()
-})
-
-const newProject = ref<any>({
-  title: '',
-  technologies: '',
-  image: null
-})
-
 const loading = ref(false)
+const editingProject = ref<any>(null)
+const showDeleteModal = ref(false)
+const deleteId = ref<number | null>(null)
 
-const editingId = ref<number | null>(null)
-
-const showDelete = ref(false)
-
-const selectedDeleteId =
-  ref<number | null>(null)
-
-// IMAGE UPLOAD
-const uploadImage = (
-  e: Event
-) => {
-
-  const target =
-    e.target as HTMLInputElement
-
-  if (!target.files?.length)
-    return
-
-  const file = target.files[0]
-
-  newProject.value.image = file
+interface ProjectForm {
+  id: number | null
+  title: string
+  description: string
+  technologies: string
+  project_url: string
+  github_url: string
+  featured: boolean
+  image: File | null
+  status: string
+  overview: string
+  problem: string
+  solution: string
+  results: string
+  features: string
+  tech_stack: string
+  gallery: string
+  hero_image: File | null
 }
 
-const previewImage = (image: any) => {
+const form = ref<ProjectForm>({
+  id: null,
+  title: '',
+  description: '',
+  technologies: '',
+  project_url: '',
+  github_url: '',
+  featured: false,
+  image: null,
+  status: 'planning',
+  overview: '',
+  problem: '',
+  solution: '',
+  results: '',
+  features: '',
+  tech_stack: '',
+  gallery: '',
+  hero_image: null,
+})
 
-  if (!image) return ''
+const previewImage = ref('')
+const previewHeroImage = ref('')
 
-  // EXISTING URL FROM BACKEND
-  if (typeof image === 'string') {
-    return image
-  }
-
-  // NEW FILE OBJECT
-  return window.URL.createObjectURL(image)
-}
-
-// SAVE PROJECT
-const saveProject = async () => {
-
-  if (
-    !newProject.value.title
-  ) {
-
-    toast.trigger(
-      'Title required',
-      'error'
-    )
-
-    return
-  }
-
-  // IMAGE REQUIRED ONLY ON CREATE
-  if (
-    !editingId.value &&
-    !newProject.value.image
-  ) {
-
-    toast.trigger(
-      'Image required',
-      'error'
-    )
-
-    return
-  }
-
-  loading.value = true
-
-  try {
-
-    if (editingId.value) {
-
-      await store.updateProject(
-        editingId.value,
-        newProject.value
-      )
-
-      toast.trigger(
-        'Project updated successfully'
-      )
-
-    } else {
-
-      await store.addProject(
-        newProject.value
-      )
-
-      toast.trigger(
-        'Project added successfully'
-      )
-    }
-
-    resetForm()
-
-  } catch (err) {
-
-    console.error(err)
-
-    toast.trigger(
-      'Operation failed',
-      'error'
-    )
-
-  } finally {
-
-    loading.value = false
-  }
-}
-
-// RESET
 const resetForm = () => {
-
-  newProject.value = {
+  form.value = {
+    id: null,
     title: '',
+    description: '',
     technologies: '',
-    image: null
+    project_url: '',
+    github_url: '',
+    featured: false,
+    image: null,
+    status: 'planning',
+    overview: '',
+    problem: '',
+    solution: '',
+    results: '',
+    features: '',
+    tech_stack: '',
+    gallery: '',
+    hero_image: null,
   }
-
-  editingId.value = null
+  previewImage.value = ''
+  previewHeroImage.value = ''
+  editingProject.value = null
 }
 
-// EDIT
-const editProject = (
-  project: any
-) => {
-
-  newProject.value = {
-    title: project.title,
-    technologies:
-      project.technologies,
-    image: project.image
-  }
-
-  editingId.value = project.id
-
-  toast.trigger(
-    'Editing project'
-  )
-
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
+const saveProject = async () => {
+  loading.value = true
+  const formData = new FormData()
+  ;(Object.keys(form.value) as Array<keyof ProjectForm>).forEach(key => {
+    if (key === 'id' || key === 'image' || key === 'hero_image') return
+    const val = form.value[key]
+    if (val !== null && val !== undefined) {
+      formData.append(key, String(val))
+    }
   })
+  if (form.value.image) {
+    formData.append('image', form.value.image)
+  }
+  if (form.value.hero_image) {
+    formData.append('hero_image', form.value.hero_image)
+  }
+  if (form.value.id) {
+    await store.update(form.value.id, formData)
+  } else {
+    await store.create(formData)
+  }
+  resetForm()
+  await store.load()
+  loading.value = false
 }
 
-// OPEN DELETE
-const openDelete = (
-  id: number
-) => {
-
-  selectedDeleteId.value = id
-
-  showDelete.value = true
+const editProject = (item: any) => {
+  form.value = {
+    id: item.id,
+    title: item.title,
+    description: item.description || '',
+    technologies: item.technologies || '',
+    project_url: item.project_url || '',
+    github_url: item.github_url || '',
+    featured: item.featured || false,
+    image: null,
+    status: item.status || 'planning',
+    overview: item.overview || '',
+    problem: item.problem || '',
+    solution: item.solution || '',
+    results: item.results || '',
+    features: item.features || '',
+    tech_stack: item.tech_stack || '',
+    gallery: item.gallery || '',
+    hero_image: null,
+  }
+  previewImage.value = item.image || ''
+  previewHeroImage.value = item.hero_image || ''
+  editingProject.value = item
 }
 
-// CONFIRM DELETE
-const confirmDelete = async () => {
+const confirmDelete = (id: number) => {
+  deleteId.value = id
+  showDeleteModal.value = true
+}
 
-  if (!selectedDeleteId.value)
-    return
+const deleteProject = async () => {
+  if (deleteId.value) {
+    await store.remove(deleteId.value)
+    await store.load()
+  }
+  showDeleteModal.value = false
+}
 
-  try {
-
-    await store.deleteProject(
-      selectedDeleteId.value
-    )
-
-    toast.trigger(
-      'Project deleted'
-    )
-
-  } catch (err) {
-
-    toast.trigger(
-      'Delete failed',
-      'error'
-    )
-
-  } finally {
-
-    showDelete.value = false
+const handleImageUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    form.value.image = file
+    previewImage.value = URL.createObjectURL(file)
   }
 }
+
+// handleHeroImageUpload
+const handleHeroImageUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (file) {
+    form.value.hero_image = file
+    previewHeroImage.value = URL.createObjectURL(file)
+  }
+}
+
+onMounted(() => {
+  store.load()
+})
+
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="space-y-2">
+    <PageHeader title="Projects" subtitle="Manage portfolio projects" />
 
-    <!-- HEADER -->
-    <div class="flex items-center justify-between">
+    <!-- Form -->
+     <div class="bg-white rounded-3xl border p-6 space-y-4">
+      <BaseInput v-model="form.title" placeholder="Project title" />
+      <BaseTextArea v-model="form.description" placeholder="Short description" rows="3" />
+      <BaseInput v-model="form.technologies" placeholder="Technologies (comma separated, e.g., Django, Vue)" />
+      <BaseInput v-model="form.project_url" placeholder="Lice demo URL (optional)" />
+      <BaseInput v-model="form.github_url" placeholder="Github URL (optional)" />
 
-      <div>
-        <h1 class="text-3xl font-bold">
-          Projects Manager
-        </h1>
-
-        <p class="text-gray-500 mt-1">
-          Manage your portfolio projects
-        </p>
-      </div>
-
-      <BaseButton>
-        + New Project
-      </BaseButton>
-
-    </div>
-
-    <!-- FORM -->
-    <div
-      class="bg-white border border-gray-100
-             rounded-3xl p-6 shadow-sm
-             space-y-5"
-    >
-
-      <div class="grid md:grid-cols-2 gap-5">
-
-        <BaseInput
-          v-model="newProject.title"
-          placeholder="Project title"
-        />
-
-        <BaseInput
-          v-model="newProject.technologies"
-          placeholder="Project technologies"
-        />
-
-      </div>
-
-      <!-- UPLOAD -->
-      <div class="space-y-3">
-
-        <label
-          class="border-2 border-dashed
-                 rounded-2xl p-8
-                 flex flex-col items-center
-                 justify-center cursor-pointer
-                 hover:border-primary transition"
-        >
-
-          <div class="text-4xl mb-3">
-            🖼️
-          </div>
-
-          <p class="font-medium">
-            Upload Project Image
-          </p>
-
-          <p class="text-sm text-gray-500 mt-1">
-            PNG, JPG or WEBP
-          </p>
-
-          <input
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="uploadImage"
-          />
-
+      <div class="flex gap-4 flex-wrap items-center">
+        <label class="flex items-center gap-2">
+          <input type="checkbox" v-model="form.featured" />
+          Featured
         </label>
-
-        <!-- PREVIEW -->
-        <div
-          v-if="newProject.image"
-          class="rounded-2xl overflow-hidden border"
-        >
-
-          <img
-            :src="previewImage(newProject.image)"
-            class="h-64 w-full object-cover"
-          />
-
-        </div>
-
       </div>
 
-      <!-- ACTIONS -->
-      <div class="flex gap-3 justify-end">
+      <div class="">
+        <label class="block text-sm font-medium mb-1">Image</label>
+        <input type="file" accept="image/*" @change="handleImageUpload" />
+        <img v-if="previewImage" :src="previewImage" class="mt-2 h-32 w-auto object-cover rounded border" />
+      </div>
 
-        <BaseButton
-          variant="secondary"
-          @click="resetForm"
-        >
+      <!-- Case Study Fields -->
+       <BaseTextArea v-model="form.overview" placeholder="Overview" rows="2" />
+       <BaseTextArea v-model="form.problem" placeholder="Problem" rows="2" />
+       <BaseTextArea v-model="form.solution" placeholder="Solution" rows="2" />
+       <BaseTextArea v-model="form.results" placeholder="Results (comma separated, e.g., 40% faster, 50% more leads)" rows="2" />
+       <BaseTextArea v-model="form.features" placeholder="Features (comma separated)" rows="2" />
+       <BaseInput v-model="form.tech_stack" placeholder="Tech Stack (comma separated)" />
+       <BaseInput v-model="form.gallery" placeholder="Gallery image URLS (comma separated)" />
+
+       <div class="">
+        <label class="block text-sm font-medium mb-1">Hero Image</label>
+        <input type="file" accept="image/*" @change="handleHeroImageUpload" />
+        <img v-if="previewHeroImage" :src="previewHeroImage" class="mt-2 h-32 w-auto object-cover rounded border">
+       </div>
+       
+       <select v-model="form.status" class="border rounded-xl px-4 py-2">
+        <option value="planning">Planning</option>
+        <option value="in_progress">In Progress</option>
+        <option value="launched">LAunched</option>
+        <option value="maintainance">Maintainance</option>
+       </select>
+
+      <div class="flex gap-3">
+        <BaseButton @click="saveProject" :disabled="loading">
+          {{ form.id ? 'Update' : 'Create' }} Project
+        </BaseButton>
+        <BaseButton variant="secondary" @click="resetForm">
           Cancel
         </BaseButton>
+      </div>
+     </div>
 
-        <BaseButton
-          @click="saveProject"
-          :disabled="loading"
-          class="flex items-center gap-2"
-        >
+     <!-- List -->
+      <div class="bg-white rounded-3xl border overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b">
+            <tr>
+              <th class="px-6 py-3 text-left">Title</th>
+              <th class="px-6 py-3 text-left">Technologies</th>
+              <th class="px-6 py-3 text-left">Featured</th>
+              <th class="px-6 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
 
-          <span
-            v-if="loading"
-            class="w-4 h-4 border-2
-                   border-white border-t-transparent
-                   rounded-full animate-spin"
-          />
-
-          {{
-            loading
-              ? 'Saving...'
-              : editingId
-                ? 'Update Project'
-                : 'Save Project'
-          }}
-
-        </BaseButton>
-
+          <tbody>
+            <tr v-for="item in store.projects" :key="item.id" class="border-b">
+              <td class="px-6 py-4 flex items-center gap-2">
+                <img v-if="item.image" :src="item.image" class="h-10 w-10 object-cover rounded" />
+                <span>{{ item.title }}</span>
+              </td>
+              <td class="px-6 py-4 max-w-xs truncate">{{ item.technologies }}</td>
+              <td class="px-6 py-4">{{ item.featured ? '⭐' : '—' }}</td>
+              <td class="px-6 py-4">
+                <button @click="editProject(item)" class="text-blue-600 mr-3">Edit</button>
+                <button @click="confirmDelete(item.id)" class="text-red-600">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-    </div>
-
-    <!-- EMPTY STATE -->
-    <div
-      v-if="!store.projects.length"
-      class="bg-white border rounded-3xl
-             py-24 text-center"
-    >
-
-      <div class="text-6xl mb-5">
-        📂
-      </div>
-
-      <h2 class="text-2xl font-bold mb-2">
-        No Projects Yet
-      </h2>
-
-      <p class="text-gray-500">
-        Start by creating your first project.
-      </p>
-
-    </div>
-
-    <!-- PROJECTS GRID -->
-    <div
-      v-else
-      class="grid md:grid-cols-2 xl:grid-cols-3 gap-6"
-    >
-
-      <div
-        v-for="p in store.projects"
-        :key="p.id"
-        class="group bg-white rounded-3xl
-               overflow-hidden shadow-sm
-               hover:shadow-xl transition"
-      >
-
-        <!-- IMAGE -->
-        <div class="relative overflow-hidden">
-
-          <img
-            :src="p.image"
-            class="h-56 w-full object-cover
-                   group-hover:scale-105
-                   transition duration-500"
-          />
-
-          <div
-            class="absolute inset-0
-                   bg-black/0 group-hover:bg-black/20
-                   transition"
-          />
-
-        </div>
-
-        <!-- CONTENT -->
-        <div class="p-5">
-
-          <div class="flex items-start justify-between">
-
-            <div>
-              <h3 class="font-bold text-lg">
-                {{ p.title }}
-              </h3>
-
-              <p class="text-sm text-gray-500 mt-1">
-                {{ p.technologies }}
-              </p>
-            </div>
-
-            <div class="text-xl">
-              🚀
-            </div>
-
-          </div>
-
-          <!-- ACTIONS -->
-          <div class="flex gap-3 mt-6">
-
-            <button
-              @click="editProject(p)"
-              class="flex-1 py-2 rounded-xl
-                     bg-primary/10 text-primary
-                     hover:bg-primary hover:text-white
-                     transition"
-            >
-              Edit
-            </button>
-
-            <button
-              @click="openDelete(p.id)"
-              class="flex-1 py-2 rounded-xl
-                     bg-red-50 text-red-500
-                     hover:bg-red-500 hover:text-white
-                     transition"
-            >
-              Delete
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- DELETE MODAL -->
-    <BaseModal
-      :show="showDelete"
-      @close="showDelete = false"
-    >
-
-      <h2 class="text-2xl font-bold mb-3">
-        Delete Project?
-      </h2>
-
-      <p class="text-gray-500">
-        This action cannot be undone.
-      </p>
-
-      <div class="flex justify-end gap-3 mt-8">
-
-        <button
-          @click="showDelete = false"
-          class="px-5 py-2 rounded-xl
-                 bg-gray-100"
-        >
-          Cancel
-        </button>
-
-        <button
-          @click="confirmDelete"
-          class="px-5 py-2 rounded-xl
-                 bg-red-500 text-white"
-        >
-          Delete
-        </button>
-
-      </div>
-
-    </BaseModal>
-
+      <!-- DeleteModal -->
+       <DeleteModal
+        :show="showDeleteModal" 
+        title="Delete Project?" 
+        message="This action cannot be undone." 
+        @close="showDeleteModal=false" 
+        @confirm="deleteProject" 
+      />
   </div>
 </template>

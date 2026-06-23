@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue';
+import { useProjectsStore } from '@/stores/projects';
+import { useServicesStore } from '@/stores/services';
 import { useTestimonialStore } from '@/stores/testimonials';
 import { onMounted, onUnmounted } from 'vue';
 
 const testimonialStore = useTestimonialStore();
+const servicesStore = useServicesStore();
+const projectsStore = useProjectsStore();
 
 let interval: number;
 
@@ -18,11 +22,15 @@ const getHostname = (url: string) => {
 
 onMounted(() => {
   testimonialStore.load();
-  // Pollevery 30 seconds to keep testimonialsup-to-date
+  servicesStore.load();
+  projectsStore.load();
+
+  // Poll every 30 seconds to keep testimonialsup-to-date
   interval = setInterval(() => {
     testimonialStore.load();
   }, 30000);
 });
+
 onUnmounted(() => {
   clearInterval(interval);
 });
@@ -104,32 +112,27 @@ onUnmounted(() => {
         We build digital products that solve real business problems and deliver measurable results.
       </p>
 
-      <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6">
-
-        <div data-aos="zoom-in"
-          class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-          <img src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg"
-               class="h-32 w-full object-cover rounded-lg mb-4" alt="Web Development" />
-          <h3 class="font-semibold mb-1">Web Development</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Modern, responsive websites that convert visitors into customers.</p>
+      <div v-if="servicesStore.loading" class="py-12">
+        <p class="text-gray-500">Loading services...</p>
+      </div>
+      <div v-else-if="servicesStore.services.length === 0" class="py-12">
+        <p class="text-gray-500">No services yet.</p>
+      </div>
+      <!-- Show only first 3 services (or a slice) -->
+      <div v-else class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6">
+        <div
+         v-for="service in servicesStore.services.slice(0, 3)" 
+         :key="service.id" 
+         data-aos="zoom-in" 
+         class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
+        >
+          <img
+           :src="service.image || 'https://via.placeholder.com/400x200?text=Service'" 
+           class="h-32 w-full object-cover rounded-lg mb-4" :alt="service.title"
+         />
+          <h3 class="font-semibold mb-1">{{ service.title }}</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ service.description }}</p>
         </div>
-
-        <div data-aos="zoom-in" data-aos-delay="100"
-          class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-          <img src="https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg"
-               class="h-32 w-full object-cover rounded-lg mb-4" alt="SaaS Systems" />
-          <h3 class="font-semibold mb-1">SaaS Systems</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Scalable dashboards and applications built for growth.</p>
-        </div>
-
-        <div data-aos="zoom-in" data-aos-delay="200"
-          class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-          <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
-               class="h-32 w-full object-cover rounded-lg mb-4" alt="Custom CMS" />
-          <h3 class="font-semibold mb-1">Custom CMS</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Content management systems tailored to your workflow.</p>
-        </div>
-
       </div>
 
       <BaseButton @click="$router.push('/services')" data-aos="fade-up" class="mt-10">
@@ -201,41 +204,27 @@ onUnmounted(() => {
     <section class="py-20 bg-white dark:bg-gray-900 text-center">
       <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Selected Work</h2>
 
-      <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6">
-
-        <div data-aos="fade-up"
-          class="group rounded-2xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm hover:shadow-xl transition">
-          <img src="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg"
-               class="h-56 w-full object-cover group-hover:scale-110 transition duration-500" alt="SaaS Dashboard" />
+      <div v-if="projectsStore.loading" class="py-12">
+        <p class="text-gray-500">Loading Projects...</p>
+      </div>
+      <div v-else-if="projectsStore.projects.length === 0" class="py-12">
+        <p class="text-gray-500">No projects yet.</p>
+      </div>
+      <div v-else class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto px-6">
+        <div v-for="project in projectsStore.projects.slice(0, 3)" :key="project.id" class="group rounded-2xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm hover:shadow-xl transition">
+          <img
+           :src="project.image || 'https://via.placeholder.com/600x400?text=Project'" 
+           class="h-56 w-full object-cover group-hover:scale-110 transition duration-500" 
+           :alt="project.title" 
+          />
           <div class="p-4 text-left">
-            <h3 class="font-semibold">SaaS Dashboard</h3>
-            <p class="text-sm text-gray-500">Admin system with real‑time analytics</p>
+            <h3 class="font-semibold">{{ project.title }}</h3>
+            <p class="text-sm text-gray-500">{{ project.technologies || 'Project' }}</p>
           </div>
         </div>
-
-        <div data-aos="fade-up" data-aos-delay="100"
-          class="group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition">
-          <img src="https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg"
-               class="h-56 w-full object-cover group-hover:scale-110 transition duration-500" alt="School CMS" />
-          <div class="p-4 text-left">
-            <h3 class="font-semibold">School CMS</h3>
-            <p class="text-sm text-gray-500">Education management system</p>
-          </div>
-        </div>
-
-        <div data-aos="fade-up" data-aos-delay="200"
-          class="group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition">
-          <img src="https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg"
-               class="h-56 w-full object-cover group-hover:scale-110 transition duration-500" alt="Portfolio Website" />
-          <div class="p-4 text-left">
-            <h3 class="font-semibold">Portfolio</h3>
-            <p class="text-sm text-gray-500">Personal brand website</p>
-          </div>
-        </div>
-
       </div>
 
-      <BaseButton data-aos="fade-up" @click="$router.push('/projects')" class="mt-10">
+      <BaseButton @click="$router.push('/projects')" class="mt-10">
         View All Projects
       </BaseButton>
     </section>

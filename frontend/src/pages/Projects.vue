@@ -1,102 +1,108 @@
 <script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue'
-import { useProjectsStore } from '@/stores/projects'
-import { onMounted, ref } from 'vue'
+import BaseButton from '@/components/ui/BaseButton.vue';
+import { useProjectsStore } from '@/stores/projects';
 
-// FILTER STATE
-const activeFilter = ref('All')
-
-// MOCK DATA (Replace with API later)
 const store = useProjectsStore()
 
-onMounted(() => {
-  store.load()
-})
-
-// FILTER LOGIC
-const filteredProjects = () => {
-  if (activeFilter.value === 'All') return store.projects
-  return store.projects.filter(p => p.category === activeFilter.value)
-}
 </script>
 
 <template>
   <div class="bg-white dark:bg-gray-900 min-h-screen">
 
     <!-- HERO -->
-    <section class="py-20 bg-gradient-to-br from-secondary to-black text-white text-center">
-      <div class="max-w-4xl mx-auto px-6">
-
-        <h1 class="text-4xl font-bold mb-4">
-          Our Work
-        </h1>
-
-        <p class="text-gray-300">
-          A collection of systems, websites, and digital products we've built.
-        </p>
-
+     <section class="relative py-24 bg-gradient-to-br from-secondary to-black text-white text-center overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div class="relative z-10 max-w-4xl mx-auto px-6" data-aos="fade-up">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Our Work</h1>
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto">A collection of systems, websites, and digital products we've built.</p>
       </div>
-    </section>
+     </section>
 
-    <!-- FILTERS -->
-    <section class="py-10">
-      <div class="max-w-7xl mx-auto px-6 flex justify-center gap-4">
-
-        <button
-          v-for="filter in ['All', 'Web', 'CMS']"
-          :key="filter"
-          @click="activeFilter = filter"
-          class="px-4 py-2 rounded-lg text-sm transition"
-          :class="activeFilter === filter
-            ? 'bg-primary text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-        >
-          {{ filter }}
-        </button>
-
-      </div>
-    </section>
-
-    <!-- PROJECT GRID -->
-    <section class="pb-20">
-      <div class="max-w-7xl mx-auto px-6">
-
-        <div class="grid md:grid-cols-3 gap-6">
-
-          <div
-            v-for="project in filteredProjects()"
-            :key="project.id"
-            @click="$router.push(`/projects/${project.id}`)"
-            class="cursor-pointer group bg-gray-100 rounded-2xl overflow-hidden"
-          >
-
-            <!-- IMAGE -->
-            <div class="h-52 overflow-hidden">
-              <img
-                :src="project.image"
-                class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-              />
-            </div>
-
-            <!-- CONTENT -->
-            <div class="p-4 space-y-2">
-
-              <h3 class="font-semibold">
-                {{ project.title }}
-              </h3>
-
-              <p class="text-sm text-gray-500">
-                {{ project.category }}
-              </p>
-
-            </div>
-
+     <!-- PROJECTS GRID -->
+      <section class="py-20 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+          <div v-if="store.loading" class="text-center py-12">
+            <div class="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-gray-500 mt-4">Loading projects...</p>
           </div>
 
+          <div v-else-if="store.projects.length === 0" class="text-center py-12">
+            <p class="text-gray-500">No projects yet.</p>
+          </div>
+
+          <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+             v-for="project in store.projects" 
+             :key="project.id" 
+             data-aos="fade-up" 
+             class="group bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden flex flex-col"
+            >
+
+              <div class="relative overflow-hidden">
+                <img
+                 :src="project.image || 'https://via.placeholder.com/600x400?text=Project'" 
+                 class="w-full h-56 object-cover group-hover:scale-105 transition duration-500" :alt="project.title" 
+                />
+                <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition"></div>
+              </div>
+
+              <div class="p-6 flex-1 flex flex-col">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">{{ project.title }}</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm flex-1 mb-4">{{ project.description }}</p>
+
+                <!-- Technologies as badges -->
+                 <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                   v-for="tech in (project.technologies || '').split(',').map(t => t.trim())" 
+                   :key="tech" 
+                   class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs px-3 py-1 rounded-full"
+                  >
+                    {{ tech }}
+                  </span>
+                 </div>
+
+                 <!-- Links (projects_url and github_url) -->
+                  <div class="flex gap-2 mb-4">
+                    <a
+                     v-if="project.project_url" 
+                     :href="project.project_url" 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                    >
+                      🔗 Live Demo
+                    </a>
+                    <a
+                     v-if="project.github_url" 
+                     :href="project.github_url" 
+                     target="_blank" 
+                     rel="noopener noreferrer">
+                      💻 Source
+                    </a>
+                  </div>
+
+                  <!-- BaseButton -->
+                   <BaseButton
+                    @click="$router.push(`/projects/${project.id}`)" 
+                    class="w-full text-center justify-center"
+                  >
+                    View Details  →
+                  </BaseButton>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
 
-      </div>
-    </section>
-
+      <!-- CTA -->
+       <section class="py-24 bg-gradient-to-r from-secondary to-black text-white text-center">
+        <div class="max-w-3xl mx-auto px-6" data-aos="zoom-in">
+          <h2 class="text-3xl font-bold mb-4">Have a Project in Mind?</h2>
+          <p class="text-gray-300 mb-6">Let's discuss how we can bring your idea to life.</p>
+          <BaseButton @click="$router.push('/contact')" class="shadow-lg hover:scale-105 transition">
+            Start a Project
+          </BaseButton>
+        </div>
+       </section>
   </div>
 </template>
