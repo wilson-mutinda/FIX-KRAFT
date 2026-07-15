@@ -33,6 +33,7 @@
                     <li class="hover:text-white cursor-pointer"><a href="/">Home</a></li>
                     <li class="hover:text-white cursor-pointer"><a href="/services">Services</a></li>
                     <li class="hover:text-white cursor-pointer"><a href="/projects">Projects</a></li>
+                    <li class="hover:text-white cursor-pointer"><a href="/blog">Blog</a></li>
                     <li class="hover:text-white cursor-pointer"><a href="/contact">Contact</a></li>
                 </ul>
             </div>
