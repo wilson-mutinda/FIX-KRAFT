@@ -244,8 +244,8 @@ const downloadQuotationPDF = async () => {
   // Build table rows from line_items
   const lineItemsRows = (q.line_items || []).map((item: any) => `
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd;">${item.service}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">${item.price.toLocaleString()}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0;">${item.service}</td>
+      <td style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">KSh ${item.price.toLocaleString()}</td>
     </tr>
   `).join('')
 
@@ -256,93 +256,108 @@ const downloadQuotationPDF = async () => {
       <meta charset="UTF-8">
       <title>Quotation ${q.quotation_number}</title>
       <style>
-        body {
-          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          margin: 0;
-          padding: 2rem;
-          background: white;
-        }
-        .container {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 2rem;
-          border-radius: 8px;
-        }
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 2px solid #2c3e50;
-          padding-bottom: 1rem;
-          margin-bottom: 1.5rem;
-        }
-        h1 { font-size: 28px; color: #2c3e50; margin: 0; }
-        .ref { font-size: 14px; color: #7f8c8d; margin: 0; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 2rem; }
-        .section { margin-bottom: 1.5rem; }
-        .section-title { background: #ecf0f1; padding: 0.5rem; font-size: 16px; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #2c3e50; color: white; }
-        .total { background: #f9f9f9; font-weight: bold; }
-        .terms { margin-top: 2rem; font-size: 11px; color: #7f8c8d; border-top: 1px solid #ddd; padding-top: 1rem; }
-        .text-right { text-align: right; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 30px; background: #f9f9f9; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e5a233; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo img { height: 60px; }
+        .title h1 { font-size: 28px; color: #1b325e; margin: 0; }
+        .title .ref { font-size: 14px; color: #7f8c8d; margin: 0; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; }
+        .info-row div { font-size: 14px; }
+        .info-row strong { color: #1b325e; }
+        .description { margin-bottom: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; }
+        .description p { margin: 0; white-space: pre-wrap; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th { background: #1b325e; color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+        td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; }
+        .total-row { background: #f0f4f8; font-weight: bold; }
+        .total-row td { border-bottom: none; padding: 12px; }
+        .total-row td:last-child { text-align: right; }
+        .payment-methods { margin: 20px 0; padding: 15px; background: #f0f4f8; border-radius: 8px; }
+        .payment-methods h3 { margin-top: 0; color: #1b325e; }
+        .payment-methods ul { list-style: none; padding: 0; display: flex; gap: 20px; flex-wrap: wrap; }
+        .payment-methods ul li { font-size: 14px; }
+        .terms { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #555; }
+        .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #e0e0e0; padding-top: 20px; }
       </style>
     </head>
     <body>
       <div class="container">
+        <!-- Header -->
         <div class="header">
-          <img src="${window.location.origin}/fix-kraft-logo-white-bg.svg" alt="FixKraft Digital" style="height: 80px;">
-          <div>
+          <div class="logo">
+            <img src="${window.location.origin}/fix-kraft-logo-white-bg.svg" alt="FixKraft Digital" style="height: 60px;">
+          </div>
+          <div class="title">
             <h1>QUOTATION</h1>
             <p class="ref">${q.quotation_number}</p>
           </div>
         </div>
 
+        <!-- Client & Date Info -->
         <div class="info-row">
           <div>
-            <p><strong>Client:</strong> ${client.name || '—'}</p>
-            <p><strong>Email:</strong> ${client.email || '—'}</p>
-            <p><strong>Phone:</strong> ${client.phone || '—'}</p>
-            <p><strong>Company:</strong> ${client.company || 'N/A'}</p>
+            <strong>Client:</strong> ${client.name || '—'}<br>
+            <strong>Email:</strong> ${client.email || '—'}<br>
+            <strong>Phone:</strong> ${client.phone || '—'}<br>
+            <strong>Company:</strong> ${client.company || 'N/A'}
           </div>
           <div style="text-align: right;">
-            <p><strong>Date:</strong> ${today}</p>
-            <p><strong>Valid Until:</strong> ${validUntil}</p>
+            <strong>Date:</strong> ${today}<br>
+            <strong>Valid Until:</strong> ${validUntil}
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Description of Work</div>
-          <p style="padding: 0.5rem; white-space: pre-wrap;">${q.description || '—'}</p>
+        <!-- Description -->
+        <div class="description">
+          <strong>Description of Work</strong>
+          <p>${q.description || '—'}</p>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+        <!-- Line Items -->
+        <table>
           <thead>
-            <tr style="background: #2c3e50; color: white;">
-              <th style="padding: 10px; text-align: left;">Item</th>
-              <th style="padding: 10px; text-align: right;">Amount (KSh)</th>
+            <tr>
+              <th>Item</th>
+              <th style="text-align: right;">Amount (KSh)</th>
             </tr>
           </thead>
           <tbody>
             ${lineItemsRows}
-            <tr class="total">
-              <td style="padding: 10px; font-weight: bold;">Total</td>
-              <td style="padding: 10px; text-align: right; font-weight: bold;">${amountFormatted}</td>
+            <tr class="total-row">
+              <td><strong>Total</strong></td>
+              <td><strong>${amountFormatted}</strong></td>
             </tr>
           </tbody>
         </table>
 
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+          <h3>Payment Options</h3>
+          <ul>
+            <li>🏦 Bank Transfer (Equity, KCB, Co-operative)</li>
+            <li>📱 M-Pesa (Paybill: 123456, Account: Invoice #)</li>
+            <li>💳 Credit/Debit Card (via PayPal/Stripe)</li>
+          </ul>
+        </div>
+
+        <!-- Terms -->
         <div class="terms">
-          <p><strong>Terms & Conditions:</strong></p>
+          <strong>Terms & Conditions</strong>
           <ul>
             <li>This quotation is valid until ${validUntil}.</li>
-            <li>Payment is due within 14 days of acceptance.</li>
+            <li>Payment is due within <strong>7 working days</strong> of acceptance.</li>
             <li>All prices are in Kenyan Shillings (KSh).</li>
             <li>Any additional work outside the scope will be quoted separately.</li>
-            <li>Please reference quotation number ${q.quotation_number} in all correspondence.</li>
+            <li>Please reference quotation number <strong>${q.quotation_number}</strong> in all correspondence.</li>
+            <li>For project-based work, a 50% deposit is required before commencement.</li>
           </ul>
-          <p>Thank you for choosing FixKraft Digital. For any questions, contact us at info@fixkraftdigital.com.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          Thank you for choosing FixKraft Digital.<br>
+          📧 info@fixkraftdigital.com &nbsp;|&nbsp; 📞 +254 748 929 891
         </div>
       </div>
     </body>
@@ -379,6 +394,16 @@ const emailQuotation = async () => {
   } catch (error) {
     console.error('Failed to email quotation', error)
     alert('Failed to send email. Please try again.')
+  }
+}
+
+const showClientModal = ref(false)
+const selectedClient = ref<any>(null)
+
+const openClientDetails = () => {
+  if (selectedQuotation.value?.inquiry_details?.client_details) {
+    selectedClient.value = selectedQuotation.value.inquiry_details.client_details
+    showClientModal.value = true
   }
 }
 
@@ -625,12 +650,27 @@ const emailQuotation = async () => {
       </div>
 
        <div class="flex gap-2 mt-4">
+        <button @click="openClientDetails" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl text-sm hover:bg-gray-300">
+          👤  View Client
+        </button>
         <button @click="downloadQuotationPDF" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm hover:bg-blue-700">
           📄 Download PDF
         </button>
         <button @click="emailQuotation" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700">
           📧 Email to Client
         </button>
+      </div>
+    </ViewModal>
+
+    <!-- Client Details Modal -->
+    <ViewModal :show="showClientModal" title="Client Details" @close="showClientModal = false">
+      <div v-if="selectedClient" class="space-y-3">
+        <p><strong>Name:</strong> {{ selectedClient.name }}</p>
+        <p><strong>Email:</strong> {{ selectedClient.email }}</p>
+        <p><strong>Phone:</strong> {{ selectedClient.phone }}</p>
+        <p><strong>Company:</strong> {{ selectedClient.company || 'N/A' }}</p>
+        <p><strong>Status:</strong> {{ selectedClient.status }}</p>
+        <p><strong>Joined:</strong> {{ new Date(selectedClient.created_at).toLocaleDateString() }}</p>
       </div>
     </ViewModal>
 

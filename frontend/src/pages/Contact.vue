@@ -31,9 +31,37 @@ const serviceOptions = [
 
 // SUBMIT HANDLER
 const submitForm = async () => {
-  loading.value = true
+
   success.value = false
   errorMessage.value = ''
+
+  // Validate required fileds
+  if (!form.value.name.trim()) {
+    errorMessage.value = 'Please enter your name.';
+    return;
+  }
+  if (!form.value.email.trim()) {
+    errorMessage.value = 'Please enter your email.';
+    return;
+  }
+  if (!form.value.phone.trim()) {
+    errorMessage.value = 'Please enter your phone number.';
+    return;
+  }
+  if (!form.value.company.trim()) {
+    errorMessage.value = 'Please enter your company name.';
+    return;
+  }
+  if (form.value.services.length === 0) {
+    errorMessage.value = 'Please select at least one service.';
+    return;
+  }
+  if (!form.value.message.trim()) {
+    errorMessage.value = 'Please describe your project.';
+    return;
+  }
+
+  loading.value = true
 
   // Convert services array to a comma‑separated string for backend
   const payload = {
@@ -59,9 +87,35 @@ const submitForm = async () => {
     setTimeout(() => {
       success.value = false
     }, 6000)
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
-    errorMessage.value = 'Something went wrong. Please try again.'
+    let errorMsg = 'Something went wrong. Please try again.'
+
+    const errData = error.response?.data
+    if (errData && typeof errData === 'object') {
+      // 1. Check for DRF's non_field_errors
+      if (errData.non_field_errors && Array.isArray(errData.non_field_errors)) {
+        errorMsg = errData.non_field_errors[0]
+      }
+      // 2. Check for detail (common in DRF)
+      else if (errData.detail && typeof errData.detail === 'string') {
+        errorMsg = errData.detail
+      }
+      // 3. Iterate over keys to find the first error message
+      else {
+        for (const key of Object.keys(errData)) {
+          const value = errData[key]
+          if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
+            errorMsg = value[0]
+            break
+          } else if (typeof value === 'string') {
+            errorMsg = value
+            break
+          }
+        }
+      }
+    }
+    errorMessage.value = errorMsg
   } finally {
     loading.value = false
   }

@@ -8,6 +8,7 @@ import Contact from '@/pages/Contact.vue'
 import Home from '@/pages/Home.vue'
 import Process from '@/pages/Process.vue'
 import Projects from '@/pages/Projects.vue'
+import RequirementsPage from '@/pages/RequirementsPage.vue'
 import Services from '@/pages/Services.vue'
 import { useAuthStore } from '@/stores/auth'
 import AdminBlog from '@/views/admin/AdminBlog.vue'
@@ -35,6 +36,7 @@ const router = createRouter({
     { path: '/contact', name: 'contact', component: Contact },
     { path: '/projects', name: 'projects', component: Projects },
     { path: '/projects/:id', name: 'project-detail', component: ProjectDetail },
+    { path: '/requirements/:token', name: 'requirements', component: RequirementsPage, meta: { requiresAuth: false } },
     { path: '/admin', component: AdminLayout, meta: { requiresAuth: true }, children: [
       { path: '', component: Dashboard },
       { path: 'projects', component: AdminProjects },

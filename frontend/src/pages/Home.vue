@@ -4,6 +4,7 @@ import { useProjectsStore } from '@/stores/projects';
 import { useServicesStore } from '@/stores/services';
 import { useTestimonialStore } from '@/stores/testimonials';
 import { onMounted, onUnmounted } from 'vue';
+import { Icon } from '@iconify/vue';
 
 const testimonialStore = useTestimonialStore();
 const servicesStore = useServicesStore();
@@ -83,26 +84,85 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <!-- RESULTS / TRUST BAR (numbers) -->
-    <section class="py-12 bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
-      <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-        <div>
-          <p class="text-3xl font-bold text-primary">20+</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Projects Delivered</p>
+    <!-- CORE EXPERTISE -->
+    <section class="py-16 bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800">
+
+      <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Section Heading -->
+        <div class="text-center mb-14" data-aos="fade-up">
+
+            <h2 class="text-4xl mb-4 font-bold text-gray-900 dark:text-white">
+                Our Expertise
+            </h2>
+
+            <p class="text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+                We build reliable digital solutions that help businesses streamline
+                operations, improve customer experiences, and accelerate growth.
+            </p>
+
         </div>
-        <div>
-          <p class="text-3xl font-bold text-primary">100%</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Client Satisfaction</p>
+
+        <!-- Services -->
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+
+          <div class="group">
+            <div class="text-5xl mb-4">💻</div>
+
+            <h3 class="font-bold text-lg">
+                Custom Software
+            </h3>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Tailor-made systems built around your unique business processes.
+            </p>
+
+          </div>
+
+          <div class="group">
+            <div class="text-5xl mb-4">🌐</div>
+
+            <h3 class="font-bold text-lg">
+                Business Websites
+            </h3>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                High-performance websites designed to attract customers and generate leads.
+            </p>
+
+          </div>
+
+          <div class="group">
+            <div class="text-5xl mb-4">🤖</div>
+
+            <h3 class="font-bold text-lg">
+                AI Solutions
+            </h3>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Intelligent automation and AI-powered tools that improve efficiency.
+            </p>
+
+          </div>
+
+          <div class="group">
+            <div class="text-5xl mb-4">☁️</div>
+
+            <h3 class="font-bold text-lg">
+                Cloud Applications
+            </h3>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Secure, scalable cloud applications built for modern businesses.
+            </p>
+
+          </div>
+
         </div>
-        <div>
-          <p class="text-3xl font-bold text-primary">4.9★</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Average Rating</p>
-        </div>
-        <div>
-          <p class="text-3xl font-bold text-primary">50+</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Happy Clients</p>
-        </div>
+
       </div>
+
     </section>
 
     <!-- SERVICES (enhanced with short benefit descriptions) -->
@@ -138,6 +198,294 @@ onUnmounted(() => {
       <BaseButton @click="$router.push('/services')" data-aos="fade-up" class="mt-10">
         View All Services
       </BaseButton>
+    </section>
+
+    <!-- INDUSTRIES -->
+    <section class="py-20 bg-white dark:bg-gray-900">
+      
+      <div class="max-w-6xl mx-auto px-6">
+        
+        <h2 class="text-3xl font-bold text-center mb-4">
+            Industries We Serve
+        </h2>
+
+        <p class="text-gray-500 text-center max-w-2xl mx-auto mb-12">
+            We develop software solutions for businesses across multiple industries.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              🏥
+              <h3 class="font-semibold mt-4">Healthcare</h3>
+          </div>
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              🏫
+              <h3 class="font-semibold mt-4">Education</h3>
+          </div>
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              🏗
+              <h3 class="font-semibold mt-4">Construction</h3>
+          </div>
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              🛒
+              <h3 class="font-semibold mt-4">Retail</h3>
+          </div>
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              💼
+              <h3 class="font-semibold mt-4">SMEs</h3>
+          </div>
+
+          <div class="p-6 rounded-2xl shadow bg-gray-50 dark:bg-gray-800">
+              🌾
+              <h3 class="font-semibold mt-4">Agriculture</h3>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>    
+
+    <!-- TECHNOLOGY STACK -->
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+
+        <div class="max-w-7xl mx-auto px-6">
+
+            <!-- Heading -->
+            <div class="text-center mb-14" data-aos="fade-up">
+
+                <h2
+                    class="text-4xl font-bold text-gray-900 dark:text-white">
+                    Our Technology Stack
+                </h2>
+
+                <p
+                    class="mt-4 max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-400">
+
+                    We leverage modern, secure and industry-proven technologies to
+                    build scalable software solutions that help businesses grow.
+
+                </p>
+
+            </div>
+
+            <!-- Technologies -->
+
+            <div
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+
+                <!-- Python -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in">
+
+                    <Icon
+                        icon="logos:python"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Python
+                    </h3>
+
+                </div>
+
+                <!-- Django -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="50">
+
+                    <Icon
+                        icon="logos:django-icon"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Django
+                    </h3>
+
+                </div>
+
+                <!-- Ruby on Rails -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="100">
+
+                    <Icon
+                        icon="logos:rails"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Rails
+                    </h3>
+
+                </div>
+
+                <!-- React -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="150">
+
+                    <Icon
+                        icon="logos:react"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        React
+                    </h3>
+
+                </div>
+
+                <!-- Vue -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="200">
+
+                    <Icon
+                        icon="logos:vue"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Vue.js
+                    </h3>
+
+                </div>
+
+                <!-- Vite -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="250">
+
+                    <Icon
+                        icon="logos:vitejs"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Vite
+                    </h3>
+
+                </div>
+
+                <!-- PostgreSQL -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="300">
+
+                    <Icon
+                        icon="logos:postgresql"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        PostgreSQL
+                    </h3>
+
+                </div>
+
+                <!-- Docker -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="350">
+
+                    <Icon
+                        icon="logos:docker-icon"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Docker
+                    </h3>
+
+                </div>
+
+                <!-- Git -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="400">
+
+                    <Icon
+                        icon="logos:git-icon"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Git
+                    </h3>
+
+                </div>
+
+                <!-- AWS -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="450">
+
+                    <Icon
+                        icon="logos:aws"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        AWS
+                    </h3>
+
+                </div>
+
+                <!-- Linux -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="500">
+
+                    <Icon
+                        icon="logos:linux-tux"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        Linux
+                    </h3>
+
+                </div>
+
+                <!-- TypeScript -->
+
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition duration-300 p-6 flex flex-col items-center hover:-translate-y-2"
+                    data-aos="zoom-in"
+                    data-aos-delay="550">
+
+                    <Icon
+                        icon="logos:typescript-icon"
+                        class="text-6xl"/>
+
+                    <h3 class="mt-4 font-semibold text-gray-800 dark:text-white">
+                        TypeScript
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </section>
 
     <!-- HOW IT WORKS (new) -->

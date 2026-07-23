@@ -557,6 +557,17 @@ const prepareQuotationForm = () => {
         <p class="text-sm text-gray-500">Status</p>
         <StatusBadge :status="selectedInquiry?.status" />
       </div>
+
+      <!-- questionnaire info -->
+       <div v-if="selectedInquiry?.questionnaire_answers && Object.keys(selectedInquiry.questionnaire_answers).length" class="">
+        <p class="text-sm text-gray-500 mt-4">Questinnaire Answers</p>
+        <div class="bg-gray-50 rounded-xl p-3 space-y-1">
+          <div v-for="(value, key) in selectedInquiry.questionnaire_answers" :key="key" class="text-sm">
+            <span class="font-medium">{{ String(key).replace(/_/g, ' ').toUpperCase() }}:</span>
+            <span>{{ value || '-' }}</span>
+          </div>
+        </div>
+       </div>
     </div>
 
     <hr />
@@ -604,7 +615,14 @@ const prepareQuotationForm = () => {
         <div class="space-y-2">
             <label class="block text-sm font-medium">Services & Prices</label>
             <div v-for="(item, idx) in quotationForm.line_items" :key="idx" class="flex gap-2 items-center">
-            <span class="flex-1 text-sm">{{ item.service }}</span>
+            <!-- <span class="flex-1 text-sm">{{ item.service }}</span> -->
+             <input
+              v-model="item.service" 
+              type="text" 
+              placeholder="Service name" 
+              class="flex-1 text-sm border rounded-xl px-3 py-2"
+             />
+             
             <input
                 v-model.number="item.price"
                 type="number"
