@@ -54,15 +54,21 @@ class Client(models.Model):
 @receiver(post_save, sender=Client)
 def create_user_for_client(sender, instance, created, **kwargs):
     if created and not instance.user:
-        user = User.objects.create_user(
-            username=instance.email,
-            email=instance.email,
-            password=None
-            )
+        username = instance.email
+        # Check if a user with this username already exists
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            # Create a new user if none exists
+            user = User.objects.create_user(
+                username=username,
+                email=instance.email,
+                password=None
+            )  
         instance.user = user
         instance.save()
 
-        # Send magic link in production (or always, but ensure FRONTEND_URL is set)
+        # Send magic link (only in production)
         if not settings.DEBUG:
             token = get_token(user)
             magic_link = f"{settings.FRONTEND_URL}/auth/callback?token={token}"
@@ -71,7 +77,5 @@ def create_user_for_client(sender, instance, created, **kwargs):
                 f'Click the link to view your inquiries: {magic_link}',
                 settings.DEFAULT_FROM_EMAIL,
                 [instance.email],
-                # prevent crashing if email fails, by failing silently
-                fail_silently=True,
+                fail_silently=True
             )
-        

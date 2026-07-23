@@ -1,6 +1,8 @@
 from rest_framework.routers import DefaultRouter
 
-from .views import InquiryViewSet
+from django.urls import path, include
+
+from .views import InquiryViewSet, requirements_api
 
 router = DefaultRouter()
 
@@ -10,4 +12,7 @@ router.register(
     basename='inquiries'
 )
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('requirements/<str:token>/', requirements_api, name='requirements_api'),
+]

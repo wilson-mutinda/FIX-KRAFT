@@ -1,6 +1,8 @@
 from django.db import models
 from clients.models import Client
 
+from django.utils.crypto import get_random_string
+
 # Create your models here.
 
 class Inquiry(models.Model):
@@ -21,7 +23,9 @@ class Inquiry(models.Model):
     )
 
     service = models.CharField(
-        max_length=255
+        max_length=255,
+        blank=True,
+        default=''
     )
 
     budget = models.CharField(
@@ -53,5 +57,17 @@ class Inquiry(models.Model):
         auto_now_add=True
     )
 
+    # NEW FILEDS FOR QUESTIONNAIRE
+    questionnaire_answers = models.JSONField(default=dict, blank=True)
+    questionnaire_completed = models.BooleanField(default=False)
+    questionnaire_token = models.CharField(max_length=100, blank=True, null=True, unique=True)
+
     def __str__(self):
         return f"{self.client.name} - {self.service}"
+    
+    def generate_token(self):
+        "Generate a unique token for the questionnaire link."
+        if not self.questionnaire_token:
+            self.questionnaire_token = get_random_string(length=32)
+            self.save()
+        return self.questionnaire_token

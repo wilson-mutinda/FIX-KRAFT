@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Inquiry
 from clients.models import Client
 
+from django.db import IntegrityError
 
 class InquirySerializer(serializers.ModelSerializer):
 
@@ -39,13 +40,19 @@ class InquirySerializer(serializers.ModelSerializer):
             'status',
             'client',
             'client_details',
-            'created_at'
+            'created_at',
+            'questionnaire_token',
+            'questionnaire_completed',
+            'questionnaire_answers',
         ]
 
         read_only_fields = [
             'client',
             'client_details',
-            'created_at'
+            'created_at',
+            'questionnaire_token',
+            'questionnaire_completed',
+            'questionnaire_answers'
         ]
 
     def get_client_details(self, obj):
@@ -59,45 +66,46 @@ class InquirySerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-
         name = validated_data.pop('name')
         email = validated_data.pop('email')
+        phone = validated_data.pop('phone', '')
+        company = validated_data.pop('company', '')
 
-        phone = validated_data.pop(
-            'phone',
-            ''
-        )
+        try:
+            # Get or create the client
+            client, created = Client.objects.get_or_create(
+                email=email,
+                defaults={
+                    'name': name,
+                    'phone': phone,
+                    'company': company
+                }
+            )
 
-        company = validated_data.pop(
-            'company',
-            ''
-        )
+            # Update existing client with new info (if not created)
+            if not created:
+                client.name = name
+                if phone:
+                    client.phone = phone
+                if company:
+                    client.company = company
+                client.save()
 
-        client, created = Client.objects.get_or_create(
-            email=email,
-            defaults={
-                'name': name,
-                'phone': phone,
-                'company': company
-            }
-        )
+        except IntegrityError as e:
+            # This will catch any database constraint violations
+            raise serializers.ValidationError({
+                'non_field_errors': [f'Client creation failed: {str(e)}']
+            })
+        except Exception as e:
+            # Catch any other unexpected error (like the signal failing)
+            raise serializers.ValidationError({
+                'non_field_errors': [f'Unexpected error: {str(e)}']
+            })
 
-        # UPDATE EXISTING CLIENT DETAILS
-        if not created:
-
-            client.name = name
-
-            if phone:
-                client.phone = phone
-
-            if company:
-                client.company = company
-
-            client.save()
-
+        # Create the inquiry
         inquiry = Inquiry.objects.create(
             client=client,
             **validated_data
         )
-
         return inquiry
+    
