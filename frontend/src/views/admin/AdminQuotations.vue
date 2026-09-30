@@ -10,6 +10,20 @@ import EditQuotationModal from './EditQuotationModal.vue'
 import html2pdf from 'html2pdf.js'
 import axios from 'axios'
 import { API_BASE_URI } from '@/config/api.ts'
+import type { Client, LineItem, Quotation } from '@/types/quotation.ts'
+// import { partial } from 'lodash-es'
+
+interface PdfExportOptions {
+  margin: [number, number, number, number]
+  filename: string
+  image: { type: 'jpeg' | 'png' | 'webp'; quality: number }
+  html2canvas: { scale: number }
+  jsPDF: {
+    unit: 'in' | 'mm' | 'cm' | 'pt' | 'px' | 'em' | 'ex'
+    format: string | [number, number]
+    orientation: 'portrait' | 'landscape'
+  }
+}
 
 const store = useQuotationStore()
 
@@ -36,11 +50,11 @@ const quotationToDelete = ref<number | null>(null)
 
 // ========== View Modal ==========
 const showViewModal = ref(false)
-const selectedQuotation = ref<any>(null)
+const selectedQuotation = ref<Quotation | null>(null)
 
 // ========== Edit Modal ==========
 const showEditModal = ref(false)
-const quotationToEdit = ref<any>(null)
+const quotationToEdit = ref<Quotation | null>(null)
 
 // ========== Loading ==========
 const isLoading = computed(() => store.loading)
@@ -81,7 +95,9 @@ const filteredQuotations = computed(() => {
 const sortedQuotations = computed(() => {
   const filtered = filteredQuotations.value
   return [...filtered].sort((a, b) => {
-    let aVal: any, bVal: any
+    let aVal: string | number
+    let bVal: string | number
+
     switch (sortField.value) {
       case 'quotation_number':
         aVal = a.quotation_number
@@ -104,9 +120,10 @@ const sortedQuotations = computed(() => {
         bVal = new Date(b.created_at).getTime()
         break
       default:
-        aVal = a[sortField.value]
-        bVal = b[sortField.value]
+        aVal = String(a[sortField.value] ?? '')
+        bVal = String(b[sortField.value] ?? '')
     }
+
     if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1
     if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1
     return 0
@@ -179,20 +196,22 @@ const bulkDelete = async () => {
   selectAll.value = false
 }
 
-const openViewModal = (quotation: any) => {
+const openViewModal = (quotation: Quotation) => {
   selectedQuotation.value = quotation
   showViewModal.value = true
 }
 
-const openEditModal = (quotation: any) => {
+const openEditModal = (quotation: Quotation) => {
   quotationToEdit.value = quotation
   showEditModal.value = true
 }
 
-const handleEditSaved = async (updated: any) => {
-  // The store update already handled in modal, but we can refresh if needed
+const handleEditSaved = async (updated: Quotation) => {
+  // Sync the currently-viewed quotation if it's the one that changed
+  if (selectedQuotation.value?.id === updated.id) {
+    selectedQuotation.value = updated
+  }
   showEditModal.value = false
-  // Optionally reload or just trust the store update
 }
 
 // ---------- Export CSV ----------
@@ -236,13 +255,14 @@ const downloadQuotationPDF = async () => {
   }
 
   const q = selectedQuotation.value
-  const client = q.inquiry_details?.client_details || {}
+  // const client = partial
+  const client: Partial<Client> = q.inquiry_details?.client_details ?? {}
   const amountFormatted = parseFloat(q.amount).toLocaleString()
   const validUntil = new Date(q.valid_until).toLocaleDateString()
   const today = new Date().toLocaleDateString()
 
   // Build table rows from line_items
-  const lineItemsRows = (q.line_items || []).map((item: any) => `
+  const lineItemsRows = (q.line_items || []).map((item: LineItem) => `
     <tr>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0;">${item.service}</td>
       <td style="padding: 8px 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">KSh ${item.price.toLocaleString()}</td>
@@ -335,10 +355,12 @@ const downloadQuotationPDF = async () => {
         <div class="payment-methods">
           <h3>Payment Options</h3>
           <ul>
-            <li>🏦 Bank Transfer (Equity, KCB, Co-operative)</li>
-            <li>📱 M-Pesa (Paybill: 123456, Account: Invoice #)</li>
-            <li>💳 Credit/Debit Card (via PayPal/Stripe)</li>
+            <li>🏦 <strong>Bank Transfer:</strong> KCB Bank — Account No: <strong>1288955936</strong> (Wilson Mutinda)</li>
+            <li>📱 <strong>M-Pesa:</strong> Till No: <strong>4663698</strong> (Wilson Mutinda)</li>
           </ul>
+          <p style="margin-top: 10px; font-size: 13px; color: #555;">
+            Please use <strong>${q.quotation_number}</strong> as the payment reference.
+          </p>
         </div>
 
         <!-- Terms -->
@@ -350,7 +372,7 @@ const downloadQuotationPDF = async () => {
             <li>All prices are in Kenyan Shillings (KSh).</li>
             <li>Any additional work outside the scope will be quoted separately.</li>
             <li>Please reference quotation number <strong>${q.quotation_number}</strong> in all correspondence.</li>
-            <li>For project-based work, a 50% deposit is required before commencement.</li>
+            <li>For project-based work, a 80% deposit is required before commencement.</li>
           </ul>
         </div>
 
@@ -368,7 +390,7 @@ const downloadQuotationPDF = async () => {
   tempDiv.innerHTML = htmlContent
   document.body.appendChild(tempDiv)
 
-  const opt: any = {
+  const opt: PdfExportOptions = {
     margin: [0.5, 0.5, 0.5, 0.5],
     filename: `Quotation_${q.quotation_number}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
@@ -389,7 +411,7 @@ const downloadQuotationPDF = async () => {
 const emailQuotation = async () => {
   if (!selectedQuotation.value) return
   try {
-    const response = await axios.post(`${API_BASE_URI}/quotation/${selectedQuotation.value.id}/email_quotation/`)
+    await axios.post(`${API_BASE_URI}/quotation/${selectedQuotation.value.id}/email_quotation/`)
     alert('Quotation emailed successfully!')
   } catch (error) {
     console.error('Failed to email quotation', error)
@@ -398,11 +420,12 @@ const emailQuotation = async () => {
 }
 
 const showClientModal = ref(false)
-const selectedClient = ref<any>(null)
+const selectedClient = ref<Client | null>(null)
 
 const openClientDetails = () => {
-  if (selectedQuotation.value?.inquiry_details?.client_details) {
-    selectedClient.value = selectedQuotation.value.inquiry_details.client_details
+  const c = selectedQuotation.value?.inquiry_details?.client_details
+  if (c) {
+    selectedClient.value = c
     showClientModal.value = true
   }
 }
@@ -670,7 +693,8 @@ const openClientDetails = () => {
         <p><strong>Phone:</strong> {{ selectedClient.phone }}</p>
         <p><strong>Company:</strong> {{ selectedClient.company || 'N/A' }}</p>
         <p><strong>Status:</strong> {{ selectedClient.status }}</p>
-        <p><strong>Joined:</strong> {{ new Date(selectedClient.created_at).toLocaleDateString() }}</p>
+        <!-- <p><strong>Joined:</strong> {{ new Date(selectedClient.created_at).toLocaleDateString() }}</p> -->
+        <p><strong>Joined:</strong> {{ selectedClient.created_at ? new Date(selectedClient.created_at).toLocaleDateString() : '-' }}</p>
       </div>
     </ViewModal>
 
